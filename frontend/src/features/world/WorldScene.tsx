@@ -1,5 +1,5 @@
 import { useGLTF } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { type ThreeEvent, useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Group, Mesh, MeshStandardMaterial, Object3D } from 'three';
 import { isValidGlbUrl } from '../../lib/api';
@@ -15,13 +15,16 @@ export interface WorldSceneProps {
   activeNodeName?: string;
   /** Optional 3D focus coordinates [x, y, z] for the checkpoint marker ring. */
   focusPoint?: [number, number, number];
+  /** Callback fired when a learner clicks a named 3D mesh node inside the .glb scene. */
+  onSelectNode?: (nodeName: string) => void;
 }
 
 /**
  * Interactive 3D scene that loads a binary glTF 2.0 (.glb) educational model,
- * highlights the active checkpoint node, and respects `prefers-reduced-motion`.
+ * highlights the active checkpoint node, supports direct 3D mesh picking,
+ * disposes cloned materials on unmount, and respects `prefers-reduced-motion`.
  */
-export function WorldScene({ modelUrl, activeNodeName, focusPoint }: WorldSceneProps) {
+export function WorldScene({ modelUrl, activeNodeName, focusPoint, onSelectNode }: WorldSceneProps) {
   if (!isValidGlbUrl(modelUrl)) {
     throw new Error(`Invalid 3D asset format for '${modelUrl}'. Only binary glTF 2.0 (.glb) models are permitted.`);
   }
@@ -42,6 +45,18 @@ export function WorldScene({ modelUrl, activeNodeName, focusPoint }: WorldSceneP
     return cloned;
   }, [gltf.scene]);
 
+  // Dispose cloned materials when switching models or unmounting.
+  useEffect(() => {
+    return () => {
+      sceneClone.traverse((obj: Object3D) => {
+        const mesh = obj as Mesh;
+        if (mesh.isMesh && mesh.material) {
+          (mesh.material as MeshStandardMaterial).dispose();
+        }
+      });
+    };
+  }, [sceneClone]);
+
   useEffect(() => {
     sceneClone.traverse((obj: Object3D) => {
       const mesh = obj as Mesh;
@@ -57,6 +72,14 @@ export function WorldScene({ modelUrl, activeNodeName, focusPoint }: WorldSceneP
     rootGroup.current.rotation.y += delta * 0.25;
   });
 
+  const handleSceneClick = (event: ThreeEvent<MouseEvent>) => {
+    event.stopPropagation();
+    const clickedName = event.object.name;
+    if (clickedName && onSelectNode) {
+      onSelectNode(clickedName);
+    }
+  };
+
   return (
     <>
       <hemisphereLight args={['#fff6e0', '#1b2a44', 0.95]} />
@@ -64,7 +87,7 @@ export function WorldScene({ modelUrl, activeNodeName, focusPoint }: WorldSceneP
       <pointLight position={[0, 1.4, 0]} color="#ffb347" intensity={5} distance={7} />
 
       <group ref={rootGroup}>
-        <primitive object={sceneClone} />
+        <primitive object={sceneClone} onClick={handleSceneClick} />
         {focusPoint && (
           <mesh position={focusPoint} rotation={[Math.PI / 2, 0, 0]}>
             <torusGeometry args={[0.48, 0.03, 12, 36]} />

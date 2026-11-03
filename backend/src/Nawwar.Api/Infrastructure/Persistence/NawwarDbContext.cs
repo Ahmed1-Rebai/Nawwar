@@ -15,6 +15,8 @@ public sealed class NawwarDbContext(DbContextOptions<NawwarDbContext> options) :
 
     public DbSet<LessonCheckpoint> LessonCheckpoints => Set<LessonCheckpoint>();
 
+    public DbSet<CheckpointCompletion> CheckpointCompletions => Set<CheckpointCompletion>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);

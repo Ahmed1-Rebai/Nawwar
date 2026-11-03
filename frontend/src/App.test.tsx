@@ -6,20 +6,23 @@ import App from './App';
 import {
   type CurriculumOverview,
   isValidGlbUrl,
+  type LearnerProgress,
   type LessonDetail,
   type SystemInfo,
 } from './lib/api';
 
-// WebGL is unavailable in jsdom; expose modelUrl and activeNodeName for verification.
+// WebGL is unavailable in jsdom; expose modelUrl, activeNodeName, and a simulated 3D mesh click trigger.
 vi.mock('./features/world/WorldCanvas', () => ({
   default: ({
     label,
     modelUrl,
     activeNodeName,
+    onSelectNode,
   }: {
     label: string;
     modelUrl?: string;
     activeNodeName?: string;
+    onSelectNode?: (nodeName: string) => void;
   }) => (
     <div
       role="img"
@@ -27,7 +30,15 @@ vi.mock('./features/world/WorldCanvas', () => ({
       data-testid="world-canvas"
       data-model-url={modelUrl}
       data-active-node={activeNodeName}
-    />
+    >
+      <button
+        type="button"
+        data-testid="pick-aperture-node"
+        onClick={() => onSelectNode?.('Aperture_Ring')}
+      >
+        Pick Aperture_Ring
+      </button>
+    </div>
   ),
 }));
 
@@ -147,6 +158,24 @@ const lessonDetails = (slug: string, culture: string): LessonDetail => {
   };
 };
 
+const learnerProgress = (completedSteps: number[]): LearnerProgress => ({
+  learnerKey: 'default',
+  totalCompletedSteps: completedSteps.length,
+  totalCheckpoints: 4,
+  lessons: [
+    {
+      lessonSlug: 'alhazen-optical-lantern',
+      completedSteps,
+      totalCheckpoints: 2,
+    },
+    {
+      lessonSlug: 'sun-earth-moon-system',
+      completedSteps: [],
+      totalCheckpoints: 2,
+    },
+  ],
+});
+
 describe('App & GLB Curriculum', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('ar');
@@ -160,6 +189,12 @@ describe('App & GLB Curriculum', () => {
         }
         if (url.endsWith('/v1/curriculum/modules')) {
           return Promise.resolve(new Response(JSON.stringify(curriculumOverview(language)), { status: 200 }));
+        }
+        if (url.includes('/v1/curriculum/progress')) {
+          return Promise.resolve(new Response(JSON.stringify(learnerProgress([])), { status: 200 }));
+        }
+        if (url.endsWith('/complete') && init?.method === 'POST') {
+          return Promise.resolve(new Response(JSON.stringify(learnerProgress([1])), { status: 200 }));
         }
         if (url.includes('/v1/curriculum/lessons/')) {
           const slug = url.split('/').pop() ?? 'alhazen-optical-lantern';
@@ -210,6 +245,24 @@ describe('App & GLB Curriculum', () => {
     const secondCheckpointTab = await screen.findByRole('tab', { name: /كَوْكَبُ الأَرْضِ/ });
     await user.click(secondCheckpointTab);
     expect(canvas).toHaveAttribute('data-active-node', 'Planet_Earth');
+  });
+
+  it('selects the matching checkpoint when a 3D mesh node is clicked inside the .glb scene and records completion', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const completeButton = await screen.findByRole('button', { name: 'إتمام نقطة الفحص' });
+    const canvas = await screen.findByTestId('world-canvas');
+    expect(canvas).toHaveAttribute('data-active-node', 'Light_Core');
+
+    await user.click(completeButton);
+
+    expect(await screen.findByRole('button', { name: 'مُكْتَمِل' })).toBeDisabled();
+    expect(screen.getByTestId('progress-summary')).toHaveTextContent('1/4');
+
+    // Clicking the 3D mesh node directly inside the GLB canvas switches to step 2 (Aperture_Ring)
+    await user.click(screen.getByTestId('pick-aperture-node'));
+    expect(canvas).toHaveAttribute('data-active-node', 'Aperture_Ring');
   });
 
   it('switches to French and left-to-right', async () => {

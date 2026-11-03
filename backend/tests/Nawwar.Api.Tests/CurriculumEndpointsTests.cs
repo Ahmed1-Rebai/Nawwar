@@ -77,4 +77,55 @@ public sealed class CurriculumEndpointsTests(ApiFactory factory) : IClassFixture
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
     }
+
+    [Fact]
+    public async Task Progress_RecordsCheckpointCompletionIdempotently_AndReturnsUpdatedSummary()
+    {
+        var learnerKey = $"learner-{Guid.NewGuid():N}";
+
+        var initial = await _client.GetFromJsonAsync<LearnerProgressResponse>(
+            new Uri($"/api/v1/curriculum/progress?learnerKey={learnerKey}", UriKind.Relative),
+            TestContext.Current.CancellationToken);
+
+        Assert.NotNull(initial);
+        Assert.Equal(learnerKey, initial.LearnerKey);
+        Assert.Equal(0, initial.TotalCompletedSteps);
+        Assert.Equal(9, initial.TotalCheckpoints);
+
+        using var completeResponse = await _client.PostAsJsonAsync(
+            new Uri("/api/v1/curriculum/lessons/sun-earth-moon-system/checkpoints/2/complete", UriKind.Relative),
+            new CompleteCheckpointRequest(learnerKey),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, completeResponse.StatusCode);
+        var updated = await completeResponse.Content.ReadFromJsonAsync<LearnerProgressResponse>(TestContext.Current.CancellationToken);
+
+        Assert.NotNull(updated);
+        Assert.Equal(1, updated.TotalCompletedSteps);
+        var solarProgress = Assert.Single(updated.Lessons, l => l.LessonSlug == "sun-earth-moon-system");
+        Assert.Equal([2], solarProgress.CompletedSteps);
+
+        // Completing the same checkpoint a second time is idempotent
+        using var duplicateResponse = await _client.PostAsJsonAsync(
+            new Uri("/api/v1/curriculum/lessons/sun-earth-moon-system/checkpoints/2/complete", UriKind.Relative),
+            new CompleteCheckpointRequest(learnerKey),
+            TestContext.Current.CancellationToken);
+
+        var afterDuplicate = await duplicateResponse.Content.ReadFromJsonAsync<LearnerProgressResponse>(TestContext.Current.CancellationToken);
+        Assert.NotNull(afterDuplicate);
+        Assert.Equal(1, afterDuplicate.TotalCompletedSteps);
+    }
+
+    [Fact]
+    public async Task CompleteCheckpoint_ReturnsProblemDetails_WhenCheckpointDoesNotExist()
+    {
+        using var response = await _client.PostAsJsonAsync(
+            new Uri("/api/v1/curriculum/lessons/sun-earth-moon-system/checkpoints/99/complete", UriKind.Relative),
+            new CompleteCheckpointRequest("test-learner"),
+            TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+    }
 }
+

@@ -26,3 +26,4 @@ public sealed class LearningModule
 
     public ICollection<Lesson> Lessons { get; init; } = [];
 }
+

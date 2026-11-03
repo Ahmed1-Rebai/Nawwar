@@ -284,3 +284,4 @@ public static class CurriculumCatalog
         ];
     }
 }
+

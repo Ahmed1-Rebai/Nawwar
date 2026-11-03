@@ -54,3 +54,4 @@ public sealed class Lesson
         !string.IsNullOrWhiteSpace(url)
         && url.EndsWith(GlbExtension, StringComparison.OrdinalIgnoreCase);
 }
+

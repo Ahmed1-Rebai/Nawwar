@@ -55,7 +55,7 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 - **Code splitting**: [`WorldCanvas.tsx`](frontend/src/features/world/WorldCanvas.tsx) is loaded via `React.lazy` in `App.tsx`, keeping the `three` + `@react-three/fiber` + `@react-three/drei` bundle out of the initial critical path.
 - **Binary `.glb` Pipeline** ([`WorldScene.tsx`](frontend/src/features/world/WorldScene.tsx)):
   - Enforces `.glb` format (`isValidGlbUrl(modelUrl)`) and loads binary glTF 2.0 models (`/models/lantern.glb`, `/models/solar-system.glb`, `/models/crystal-lattice.glb`) via `useGLTF` from `@react-three/drei`.
-  - Clones the loaded scene graph so material highlight state stays isolated per instance, highlights the mesh matching the active checkpoint's `TargetNodeName`, and renders a focus ring at the checkpoint's 3D `FocusPoint`.
+  - Clones the loaded scene graph so material highlight state stays isolated per instance, highlights the mesh matching the active checkpoint's `TargetNodeName`, supports direct 3D mesh picking (`onClick` → `onSelectNode`), disposes cloned materials on unmount, and renders a focus ring at the checkpoint's 3D `FocusPoint`.
   - Checks `window.matchMedia('(prefers-reduced-motion: reduce)')` and pauses frame rotation when reduced motion is requested.
 - **Fault isolation**: [`ErrorBoundary.tsx`](frontend/src/components/ErrorBoundary.tsx) catches WebGL or asset errors and displays a localized fallback notice.
 
@@ -67,8 +67,9 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
   - `LearningModule` (`learning_modules`): localized module metadata (`ar`, `fr`, `en`) and display order.
   - `Lesson` (`lessons`): localized title/objective, `.glb` asset URL (`model_url` enforced by check constraint `ck_lessons_model_url_glb`), `ModelFormat` (`model/gltf-binary`), and camera coordinates.
   - `LessonCheckpoint` (`lesson_checkpoints`): ordered 3D inspection steps referencing a named node (`TargetNodeName`) and 3D focus point inside the `.glb` model.
+  - `CheckpointCompletion` (`checkpoint_completions`): persistent learner checkpoint completion records indexed uniquely by `(learner_key, lesson_slug, step_order)`.
 - **Frontend Explorer** ([`CurriculumExplorer.tsx`](frontend/src/features/curriculum/CurriculumExplorer.tsx)):
-  - Fetches `/api/v1/curriculum/modules` and `/api/v1/curriculum/lessons/{slug}` with `Accept-Language` and synchronizes the active `.glb` model and checkpoint node with `WorldCanvas`.
+  - Fetches `/api/v1/curriculum/modules`, `/api/v1/curriculum/lessons/{slug}`, and `/api/v1/curriculum/progress` with `Accept-Language`, synchronizes the active `.glb` model and checkpoint node (via both tab selection and direct 3D mesh clicks) with `WorldCanvas`, and records completed checkpoints via `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete`.
 
 ---
 
@@ -115,6 +116,8 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 | `GET /api/v1/system/info` | Service metadata and resolved request culture/direction | Public | `200 OK` JSON (`SystemInfoResponse`) + `Content-Language` header |
 | `GET /api/v1/curriculum/modules` | Localized list of learning modules and `.glb` lesson summaries | Public | `200 OK` JSON (`CurriculumOverviewResponse`) |
 | `GET /api/v1/curriculum/lessons/{slug}` | Localized `.glb` lesson detail, camera config, and 3D scene checkpoints | Public | `200 OK` JSON (`LessonDetailResponse`) or `404` Problem Details |
+| `GET /api/v1/curriculum/progress` | Completed 3D scene checkpoints across all lessons for a learner | Public | `200 OK` JSON (`LearnerProgressResponse`) |
+| `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete` | Idempotently marks a 3D checkpoint as completed for a learner | Public | `200 OK` JSON (`LearnerProgressResponse`) or `400`/`404` Problem Details |
 | `GET /openapi/v1.json` | OpenAPI 3 document (`Development` environment only) | Dev only | `200 OK` JSON |
 
 ---

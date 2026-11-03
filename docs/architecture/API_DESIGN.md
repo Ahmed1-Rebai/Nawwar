@@ -1,27 +1,26 @@
-# API Design (`docs/architecture/API_DESIGN.md`)
+# API Design — NAWWAR (`Nawwar.Api`)
 
-All browser-consumed endpoints are versioned under `/api/v1` and honor ASP.NET Core request localization (`Accept-Language: ar | fr | en`, defaulting to `ar`). Every response includes a `Content-Language` header, and errors follow RFC 9457 Problem Details (`application/problem+json`).
+## 1. Conventions
+
+- **Base Path**: `/api/v1`
+- **Localization**: Reads `Accept-Language` (`ar`, `fr`, `en`; defaults to `ar`) and echoes `Content-Language` on every response.
+- **Error Format**: RFC 9457 Problem Details (`application/problem+json`).
 
 ---
 
-## Endpoints
+## 2. Endpoints
 
-### 1. `GET /api/v1/system/info`
-Returns service metadata and the culture resolved for the current request.
+### `GET /health/live`
+Liveness probe (`200 OK`).
 
-```json
-{
-  "name": "NAWWAR",
-  "version": "0.1.0",
-  "culture": "ar",
-  "direction": "rtl",
-  "defaultCulture": "ar",
-  "supportedCultures": ["ar", "fr", "en"]
-}
-```
+### `GET /health/ready`
+Readiness probe (`200 OK` when PostgreSQL connectivity check succeeds, `503 Service Unavailable` otherwise).
 
-### 2. `GET /api/v1/curriculum/modules`
-Returns all curriculum modules and their interactive `.glb` lessons localized to the active request culture (`ar` default, `fr`, `en`).
+### `GET /api/v1/system/info`
+Returns API identity, version, resolved culture, text direction (`rtl` or `ltr`), default culture (`ar`), and supported cultures.
+
+### `GET /api/v1/curriculum/modules`
+Returns localized curriculum modules and their `.glb` lesson summaries in the active request culture.
 
 ```json
 {
@@ -32,13 +31,13 @@ Returns all curriculum modules and their interactive `.glb` lessons localized to
       "slug": "optics-and-light",
       "order": 1,
       "title": "البَصَرِيَّاتُ وَفِيزْيَاءُ الضَّوْءِ",
-      "summary": "اِسْتَكْشِفْ كَيْفَ يَنْتَقِلُ الضَّوْءُ فِي خُطُوطٍ مُسْتَقِيمَةٍ وَكَيْفَ فَسَّرَ ابْنُ الهَيْثَمِ الرُّؤْيَةَ.",
+      "summary": "استكشاف سلوك الأشعة الضوئية والعدسات وتجارب ابن الهيثم البصرية.",
       "lessons": [
         {
           "slug": "alhazen-optical-lantern",
           "order": 1,
           "title": "مِصْبَاحُ ابْنِ الهَيْثَمِ وَالحُجْرَةُ المُظْلِمَةُ",
-          "objective": "مُلاحَظَةُ مَسَارِ الأَشِعَّةِ الضَّوْئِيَّةِ عَبْرَ الثُّقْبِ الضَّيِّقِ وَتَشَكُّلِ الصُّورَةِ المَقْلُوبَةِ.",
+          "objective": "فهم انتقال الضوء في خطوط مستقيمة عبر الثقوب الضيقة وتكوّن الصور.",
           "modelUrl": "/models/lantern.glb",
           "modelFormat": "model/gltf-binary",
           "checkpointCount": 3
@@ -49,5 +48,26 @@ Returns all curriculum modules and their interactive `.glb` lessons localized to
 }
 ```
 
-### 3. `GET /api/v1/curriculum/lessons/{slug}`
-Returns a single localized 3D lesson, its `.glb` asset camera configuration, and its ordered 3D scene checkpoints (`targetNodeName` matches the named mesh node inside the `.glb` binary asset). Returns `404 Not Found` (`application/problem+json`) when `slug` does not exist.
+### `GET /api/v1/curriculum/lessons/{slug}`
+Returns a single localized 3D lesson, its `.glb` asset metadata (`url`, `format: "model/gltf-binary"`, `cameraPosition`, `cameraTarget`), and its ordered 3D scene checkpoints (`stepOrder`, `targetNodeName`, `focusPoint`, `title`, `explanation`). Returns `404 Not Found` (`application/problem+json`) if `{slug}` does not exist.
+
+### `GET /api/v1/curriculum/progress?learnerKey={learnerKey}`
+Returns completed 3D scene checkpoints across all curriculum lessons for `learnerKey` (defaults to `"default"`).
+
+```json
+{
+  "learnerKey": "default",
+  "totalCompletedSteps": 1,
+  "totalCheckpoints": 9,
+  "lessons": [
+    {
+      "lessonSlug": "alhazen-optical-lantern",
+      "completedSteps": [1],
+      "totalCheckpoints": 3
+    }
+  ]
+}
+```
+
+### `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete`
+Idempotently records that `learnerKey` completed checkpoint `{stepOrder}` of lesson `{slug}` and returns the updated `LearnerProgressResponse`. Returns `404 Not Found` (`application/problem+json`) if the lesson or checkpoint step does not exist.

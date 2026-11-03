@@ -54,6 +54,7 @@ export default function App() {
                   modelUrl={scene.modelUrl}
                   activeNodeName={scene.activeNodeName}
                   focusPoint={scene.focusPoint}
+                  onSelectNode={scene.onSelectNode}
                 />
               </Suspense>
             </ErrorBoundary>

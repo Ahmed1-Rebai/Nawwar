@@ -4,15 +4,16 @@
 
 ---
 
-## Features (Phase 1 Foundation — `v0.1.0`)
+## Features (`v0.2.0`)
 
 - **Arabic-First & Multi-Language (`ar` / `fr` / `en`)**:
   - Boots in Arabic (`lang="ar" dir="rtl"`) by default with full diacritics (tashkeel) and self-hosted `Noto Sans Arabic Variable` typography.
   - Instant switching between **العربية (`rtl`)**, **Français (`ltr`)**, and **English (`ltr`)** using CSS logical properties and compile-time translation parity.
-- **Interactive 3D Rendering Pipeline**:
-  - Code-split Three.js + React Three Fiber (`@react-three/fiber` / `@react-three/drei`) 3D viewport with orbit controls, reduced-motion support, and an `ErrorBoundary` fallback when WebGL is unavailable.
-- **ASP.NET Core 10 API & PostgreSQL 18**:
-  - Culture-aware Minimal API (`/api/v1/system/info`), liveness (`/health/live`) and database readiness (`/health/ready`) probes, RFC 9457 Problem Details, and least-privilege PostgreSQL role provisioning (`nawwar_app`).
+- **Interactive `.glb` 3D Educational Scenes**:
+  - Code-split Three.js + React Three Fiber (`@react-three/fiber` / `@react-three/drei`) 3D viewport loading binary glTF 2.0 (`.glb`) scientific models (`/models/lantern.glb`, `/models/solar-system.glb`, `/models/crystal-lattice.glb`).
+  - Direct 3D mesh picking and checkpoint node highlighting (`TargetNodeName`), orbit controls, reduced-motion support, GPU material disposal on unmount, and an `ErrorBoundary` fallback when WebGL is unavailable.
+- **ASP.NET Core 10 API & PostgreSQL 18 Curriculum + Progress Persistence**:
+  - Culture-aware Minimal API (`/api/v1/system/info`, `/api/v1/curriculum/modules`, `/api/v1/curriculum/lessons/{slug}`, `/api/v1/curriculum/progress`, `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete`), liveness (`/health/live`) and database readiness (`/health/ready`) probes, RFC 9457 Problem Details, and least-privilege PostgreSQL role provisioning (`nawwar_app`).
 - **Docker-First Reproducibility**:
   - Multi-stage Dockerfiles for both frontend and backend, non-root runtime containers, persistent volumes, health checks, and environment-specific Compose overrides (`dev` and `prod`).
 
@@ -110,8 +111,13 @@ docker build --target test -t nawwar/frontend:test ./frontend
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Current system, frontend, 3D, localization, API, database, and container architecture |
 | [`PROGRESS.md`](PROGRESS.md) | Truthful implementation progress, verification results, and next steps |
 | [`ROADMAP.md`](ROADMAP.md) | Phased development roadmap and acceptance criteria |
-| [`DECISIONS.md`](DECISIONS.md) | Architecture Decision Records (`ADR-0001` – `ADR-0007`) |
+| [`DECISIONS.md`](DECISIONS.md) | Architecture Decision Records (`ADR-0001` – `ADR-0008`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Versioned project changelog |
+| [`docs/product/PRODUCT_SPECIFICATION.md`](docs/product/PRODUCT_SPECIFICATION.md) | Product vision, personas, and implemented capabilities |
+| [`docs/product/EDUCATIONAL_FRAMEWORK.md`](docs/product/EDUCATIONAL_FRAMEWORK.md) | Pedagogical principles and `.glb` 3D curriculum matrix |
+| [`docs/design/DESIGN_SYSTEM.md`](docs/design/DESIGN_SYSTEM.md) | Color tokens, Arabic typography, and RTL layout rules |
+| [`docs/architecture/DATABASE_SCHEMA.md`](docs/architecture/DATABASE_SCHEMA.md) | PostgreSQL 18 ER diagram, tables, and `.glb` check constraints |
+| [`docs/architecture/API_DESIGN.md`](docs/architecture/API_DESIGN.md) | Versioned `/api/v1` REST contracts and sample payloads |
 | [`docs/infrastructure/DOCKER.md`](docs/infrastructure/DOCKER.md) | Detailed Docker & Compose operations, volumes, networking, and troubleshooting |
 | [`docs/infrastructure/ENVIRONMENT.md`](docs/infrastructure/ENVIRONMENT.md) | Reference for all `.env` variables and secret hygiene |
 | [`docs/architecture/LOCALIZATION.md`](docs/architecture/LOCALIZATION.md) | Arabic-first RTL, typography, and client/server localization rules |

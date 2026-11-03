@@ -289,3 +289,4 @@ for (const [filename, buffer] of outputs) {
   writeFileSync(fullPath, buffer);
   console.log(`Generated ${filename} (${buffer.byteLength} bytes)`);
 }
+

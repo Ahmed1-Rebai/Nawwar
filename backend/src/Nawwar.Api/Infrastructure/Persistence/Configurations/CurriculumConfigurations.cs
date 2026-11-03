@@ -7,7 +7,8 @@ namespace Nawwar.Api.Infrastructure.Persistence.Configurations;
 public sealed class CurriculumConfigurations :
     IEntityTypeConfiguration<LearningModule>,
     IEntityTypeConfiguration<Lesson>,
-    IEntityTypeConfiguration<LessonCheckpoint>
+    IEntityTypeConfiguration<LessonCheckpoint>,
+    IEntityTypeConfiguration<CheckpointCompletion>
 {
     public void Configure(EntityTypeBuilder<LearningModule> builder)
     {
@@ -79,4 +80,23 @@ public sealed class CurriculumConfigurations :
         builder.Property(c => c.ExplanationFr).HasMaxLength(1200).IsRequired();
         builder.Property(c => c.ExplanationEn).HasMaxLength(1200).IsRequired();
     }
+
+    public void Configure(EntityTypeBuilder<CheckpointCompletion> builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.ToTable("checkpoint_completions");
+        builder.HasKey(c => c.Id);
+
+        builder.Property(c => c.Id).HasColumnName("id");
+        builder.Property(c => c.LearnerKey).HasColumnName("learner_key").HasMaxLength(80).IsRequired();
+        builder.Property(c => c.LessonSlug).HasColumnName("lesson_slug").HasMaxLength(100).IsRequired();
+        builder.Property(c => c.StepOrder).HasColumnName("step_order").IsRequired();
+        builder.Property(c => c.CompletedAtUtc).HasColumnName("completed_at_utc").IsRequired();
+
+        builder.HasIndex(c => new { c.LearnerKey, c.LessonSlug, c.StepOrder })
+            .HasDatabaseName("ix_checkpoint_completions_learner_lesson_step")
+            .IsUnique();
+    }
 }
+

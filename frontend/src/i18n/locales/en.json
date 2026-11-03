@@ -21,7 +21,10 @@
     "loading": "Loading curriculum…",
     "unavailable": "Could not load learning modules from the server.",
     "checkpointsTitle": "3D scene inspection checkpoints",
-    "targetNode": "Target 3D node"
+    "targetNode": "Target 3D node",
+    "progressLabel": "Learning progress",
+    "markComplete": "Mark checkpoint complete",
+    "completed": "Completed"
   },
   "status": {
     "title": "Server status",

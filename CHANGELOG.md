@@ -5,20 +5,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [0.2.0] — 2026-11-03 (Phase 2 Step 1–3: Interactive Curriculum & `.glb` 3D Lesson Pipeline)
+## [0.2.0] — 2026-11-03 (Phase 2: Interactive Curriculum, `.glb` 3D Lesson Pipeline & Progress Persistence)
 
 ### Added
 - **Educational Curriculum Domain & Persistence (`backend/`)**:
-  - `LearningModule`, `Lesson`, and `LessonCheckpoint` domain entities with Arabic (with full diacritics), French, and English fields.
+  - `LearningModule`, `Lesson`, `LessonCheckpoint`, and `CheckpointCompletion` domain entities with Arabic (with full diacritics), French, and English fields.
   - Database-level check constraint `ck_lessons_model_url_glb` (`model_url LIKE '%.glb'`) and domain validation `Lesson.IsValidGlbUrl` enforcing binary glTF 2.0 (`.glb`) 3D models.
-  - `CurriculumCatalog` and `CurriculumInitializer` seeding 3 starter modules (*Optics and Physics of Light*, *Planetary Astronomy and Orbits*, *Atomic Structure and Molecular Geometry*), 3 `.glb` lessons, and 9 interactive 3D checkpoints into PostgreSQL on startup.
-  - `GET /api/v1/curriculum/modules` and `GET /api/v1/curriculum/lessons/{slug}` endpoints in `CurriculumEndpoints.cs` with 5 new xUnit v3 integration tests in `CurriculumEndpointsTests.cs` (`12/12` total backend tests passing).
-- **Binary `.glb` 3D Models & React Three Fiber Scene Loader (`frontend/`)**:
+  - `CurriculumCatalog` and `CurriculumInitializer` seeding 3 starter modules (*Optics and Physics of Light*, *Planetary Astronomy and Orbits*, *Atomic Structure and Molecular Geometry*), 3 `.glb` lessons, and 9 interactive 3D checkpoints into PostgreSQL on startup, plus non-destructive `checkpoint_completions` table provisioning.
+  - `GET /api/v1/curriculum/modules`, `GET /api/v1/curriculum/lessons/{slug}`, `GET /api/v1/curriculum/progress`, and `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete` endpoints in `CurriculumEndpoints.cs` with 7 xUnit v3 integration tests in `CurriculumEndpointsTests.cs` (`14/14` total backend tests passing).
+- **Binary `.glb` 3D Models, Direct Mesh Picking & Progress UI (`frontend/`)**:
   - `frontend/scripts/generate-glb-models.mjs` generating spec-compliant binary glTF 2.0 (`.glb`) assets in `frontend/public/models/` (`lantern.glb`, `solar-system.glb`, `crystal-lattice.glb`) with named scene-graph nodes (`Light_Core`, `Aperture_Ring`, `Lantern_Base`, `Core_Sun`, `Planet_Earth`, `Moon_Satellite`, `Central_Atom`, `Bond_Axis`, `Vertex_Ligand`).
-  - `WorldScene.tsx` and `WorldCanvas.tsx` updated to load `.glb` models via `useGLTF`, validate `.glb` URLs, highlight the selected checkpoint's 3D node, and render a 3D focus indicator ring.
-  - `CurriculumExplorer.tsx` component for browsing localized modules, switching `.glb` 3D lessons, and inspecting 3D checkpoints across `ar` (`rtl`), `fr` (`ltr`), and `en` (`ltr`).
+  - `WorldScene.tsx` and `WorldCanvas.tsx` updated to load `.glb` models via `useGLTF`, validate `.glb` URLs, highlight the selected checkpoint's 3D node, support direct 3D mesh picking (`onClick` → `onSelectNode`), dispose cloned materials on unmount, and render a 3D focus indicator ring.
+  - `CurriculumExplorer.tsx` component for browsing localized modules, switching `.glb` 3D lessons, inspecting and completing 3D checkpoints, and tracking overall progress across `ar` (`rtl`), `fr` (`ltr`), and `en` (`ltr`) (`12/12` frontend Vitest tests passing).
   - `nginx/default.conf` updated with dedicated `model/gltf-binary` MIME handling for `.glb` assets.
-  - Documentation added in `docs/architecture/DATABASE_SCHEMA.md`, `docs/architecture/API_DESIGN.md`, and `ADR-0008` in `DECISIONS.md`.
+  - Documentation added in `docs/product/PRODUCT_SPECIFICATION.md`, `docs/product/EDUCATIONAL_FRAMEWORK.md`, `docs/design/DESIGN_SYSTEM.md`, `docs/architecture/DATABASE_SCHEMA.md`, `docs/architecture/API_DESIGN.md`, and `ADR-0008` in `DECISIONS.md`.
 
 ---
 

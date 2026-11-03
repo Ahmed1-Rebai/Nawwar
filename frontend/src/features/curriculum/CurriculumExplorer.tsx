@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  completeCheckpoint,
   getCurriculumModules,
+  getLearnerProgress,
   getLessonBySlug,
+  type LearnerProgress,
   type LearningModule,
   type LessonCheckpoint,
   type LessonDetail,
 } from '../../lib/api';
+
+const DEFAULT_LEARNER_KEY = 'default';
 
 export interface ActiveSceneState {
   modelUrl: string;
@@ -14,6 +19,7 @@ export interface ActiveSceneState {
   lessonObjective: string;
   activeNodeName?: string;
   focusPoint?: [number, number, number];
+  onSelectNode?: (nodeName: string) => void;
 }
 
 interface CurriculumExplorerProps {
@@ -31,14 +37,16 @@ type LoadState =
     };
 
 /**
- * Fetches localized curriculum modules and interactive 3D (.glb) lesson checkpoints
- * from the API and synchronizes the active 3D scene and selected checkpoint node.
+ * Fetches localized curriculum modules, interactive 3D (.glb) lesson checkpoints,
+ * and persistent learner progress from the API, synchronizing the active 3D scene
+ * and supporting both tab selection and direct 3D mesh picking.
  */
 export function CurriculumExplorer({ onSceneChange }: CurriculumExplorerProps) {
   const { t, i18n } = useTranslation();
   const [selectedSlug, setSelectedSlug] = useState<string>('alhazen-optical-lantern');
   const [selectedStep, setSelectedStep] = useState<number>(1);
   const [state, setState] = useState<LoadState>({ status: 'loading' });
+  const [progress, setProgress] = useState<LearnerProgress | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -47,14 +55,20 @@ export function CurriculumExplorer({ onSceneChange }: CurriculumExplorerProps) {
     Promise.all([
       getCurriculumModules({ language: requestedLanguage, signal: controller.signal }),
       getLessonBySlug(selectedSlug, { language: requestedLanguage, signal: controller.signal }),
+      getLearnerProgress(DEFAULT_LEARNER_KEY, { language: requestedLanguage, signal: controller.signal }).catch(
+        () => null,
+      ),
     ])
-      .then(([overview, lesson]) => {
+      .then(([overview, lesson, learnerProgress]) => {
         setState({
           status: 'ready',
           requestedLanguage,
           modules: overview.modules,
           lesson,
         });
+        if (learnerProgress) {
+          setProgress(learnerProgress);
+        }
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) {
@@ -68,8 +82,9 @@ export function CurriculumExplorer({ onSceneChange }: CurriculumExplorerProps) {
 
   useEffect(() => {
     if (state.status !== 'ready') return;
+    const checkpoints = state.lesson.checkpoints;
     const checkpoint: LessonCheckpoint | undefined =
-      state.lesson.checkpoints.find((c) => c.stepOrder === selectedStep) ?? state.lesson.checkpoints[0];
+      checkpoints.find((c) => c.stepOrder === selectedStep) ?? checkpoints[0];
 
     onSceneChange({
       modelUrl: state.lesson.asset.url,
@@ -77,14 +92,45 @@ export function CurriculumExplorer({ onSceneChange }: CurriculumExplorerProps) {
       lessonObjective: state.lesson.objective,
       activeNodeName: checkpoint?.targetNodeName,
       focusPoint: checkpoint?.focusPoint,
+      onSelectNode: (nodeName: string) => {
+        const matched = checkpoints.find((c) => c.targetNodeName === nodeName);
+        if (matched) {
+          setSelectedStep(matched.stepOrder);
+        }
+      },
     });
   }, [state, selectedStep, onSceneChange]);
 
+  const handleCompleteCheckpoint = (lessonSlug: string, stepOrder: number) => {
+    completeCheckpoint(lessonSlug, stepOrder, DEFAULT_LEARNER_KEY, { language: i18n.language })
+      .then((updated) => {
+        setProgress(updated);
+      })
+      .catch((error: unknown) => {
+        console.warn('Checkpoint completion failed', error);
+      });
+  };
+
   const isLoading = state.status === 'loading' || (state.status === 'ready' && state.requestedLanguage !== i18n.language);
+
+  const completedStepsForLesson =
+    state.status === 'ready' && progress
+      ? (progress.lessons.find((l) => l.lessonSlug === state.lesson.slug)?.completedSteps ?? [])
+      : [];
 
   return (
     <section className="card curriculum" aria-labelledby="curriculum-title" aria-live="polite">
-      <h2 id="curriculum-title">{t('curriculum.title')}</h2>
+      <div className="curriculum__header">
+        <h2 id="curriculum-title">{t('curriculum.title')}</h2>
+        {progress && (
+          <span className="progress-pill" data-testid="progress-summary">
+            <span>{t('curriculum.progressLabel')}: </span>
+            <strong dir="ltr">
+              {progress.totalCompletedSteps}/{progress.totalCheckpoints}
+            </strong>
+          </span>
+        )}
+      </div>
 
       {isLoading && <p>{t('curriculum.loading')}</p>}
       {state.status === 'error' && <p className="notice">{t('curriculum.unavailable')}</p>}
@@ -129,6 +175,7 @@ export function CurriculumExplorer({ onSceneChange }: CurriculumExplorerProps) {
             <div className="checkpoint-tabs" role="tablist" aria-label={t('curriculum.checkpointsTitle')}>
               {state.lesson.checkpoints.map((cp) => {
                 const isSelected = cp.stepOrder === selectedStep;
+                const isCompleted = completedStepsForLesson.includes(cp.stepOrder);
                 return (
                   <button
                     key={cp.stepOrder}
@@ -138,7 +185,7 @@ export function CurriculumExplorer({ onSceneChange }: CurriculumExplorerProps) {
                     className="checkpoint-tab"
                     onClick={() => setSelectedStep(cp.stepOrder)}
                   >
-                    <span className="checkpoint-tab__step">{cp.stepOrder}</span>
+                    <span className="checkpoint-tab__step">{isCompleted ? '✓' : cp.stepOrder}</span>
                     <span>{cp.title}</span>
                   </button>
                 );
@@ -147,15 +194,28 @@ export function CurriculumExplorer({ onSceneChange }: CurriculumExplorerProps) {
 
             {state.lesson.checkpoints
               .filter((cp) => cp.stepOrder === selectedStep)
-              .map((cp) => (
-                <div key={cp.stepOrder} className="checkpoint-detail" role="tabpanel">
-                  <p className="checkpoint-detail__explanation">{cp.explanation}</p>
-                  <p className="checkpoint-detail__node">
-                    <span>{t('curriculum.targetNode')}: </span>
-                    <code dir="ltr">{cp.targetNodeName}</code>
-                  </p>
-                </div>
-              ))}
+              .map((cp) => {
+                const isCompleted = completedStepsForLesson.includes(cp.stepOrder);
+                return (
+                  <div key={cp.stepOrder} className="checkpoint-detail" role="tabpanel">
+                    <p className="checkpoint-detail__explanation">{cp.explanation}</p>
+                    <div className="checkpoint-detail__footer">
+                      <p className="checkpoint-detail__node">
+                        <span>{t('curriculum.targetNode')}: </span>
+                        <code dir="ltr">{cp.targetNodeName}</code>
+                      </p>
+                      <button
+                        type="button"
+                        className="checkpoint-complete-button"
+                        disabled={isCompleted}
+                        onClick={() => handleCompleteCheckpoint(state.lesson.slug, cp.stepOrder)}
+                      >
+                        {isCompleted ? t('curriculum.completed') : t('curriculum.markComplete')}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         </>
       )}

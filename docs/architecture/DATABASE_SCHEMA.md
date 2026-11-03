@@ -1,17 +1,14 @@
-# Database Schema (`docs/architecture/DATABASE_SCHEMA.md`)
+# Database Schema — NAWWAR (`PostgreSQL 18`)
 
-This document describes the PostgreSQL 18 relational schema managed by `NawwarDbContext` ([`NawwarDbContext.cs`](../../backend/src/Nawwar.Api/Infrastructure/Persistence/NawwarDbContext.cs)).
-
----
-
-## 1. Entity-Relationship Diagram
+## 1. Entity-Relationship Overview
 
 ```mermaid
 erDiagram
-    learning_modules ||--o{ lessons : "contains"
-    lessons ||--o{ lesson_checkpoints : "defines"
+    LEARNING_MODULES ||--o{ LESSONS : contains
+    LESSONS ||--o{ LESSON_CHECKPOINTS : defines
+    CHECKPOINT_COMPLETIONS }o--|| LESSONS : tracks_slug
 
-    learning_modules {
+    LEARNING_MODULES {
         uuid Id PK
         varchar(80) Slug UK
         int DisplayOrder
@@ -23,7 +20,7 @@ erDiagram
         varchar(600) SummaryEn
     }
 
-    lessons {
+    LESSONS {
         uuid Id PK
         uuid ModuleId FK
         varchar(100) Slug UK
@@ -44,11 +41,11 @@ erDiagram
         real CameraTargetZ
     }
 
-    lesson_checkpoints {
+    LESSON_CHECKPOINTS {
         uuid Id PK
         uuid LessonId FK
         int StepOrder "UNIQUE (LessonId, StepOrder)"
-        varchar(100) TargetNodeName "Named node inside .glb scene graph"
+        varchar(100) TargetNodeName
         real FocusX
         real FocusY
         real FocusZ
@@ -59,12 +56,23 @@ erDiagram
         varchar(1200) ExplanationFr
         varchar(1200) ExplanationEn
     }
+
+    CHECKPOINT_COMPLETIONS {
+        uuid id PK
+        varchar(80) learner_key
+        varchar(100) lesson_slug
+        int step_order
+        timestamptz completed_at_utc
+    }
 ```
 
----
+## 2. Constraints & Invariants
 
-## 2. `.glb` 3D Asset Constraint
-
-Every row in `lessons` must reference a binary glTF 2.0 (`.glb`) 3D model:
-- Enforced at the PostgreSQL level by check constraint `ck_lessons_model_url_glb` (`model_url LIKE '%.glb'`) in [`CurriculumConfigurations.cs`](../../backend/src/Nawwar.Api/Infrastructure/Persistence/Configurations/CurriculumConfigurations.cs).
-- Enforced in domain logic by `Lesson.IsValidGlbUrl(url)` in [`Lesson.cs`](../../backend/src/Nawwar.Api/Features/Curriculum/Domain/Lesson.cs) and in the frontend by `isValidGlbUrl(url)` in [`api.ts`](../../frontend/src/lib/api.ts).
+- **`ck_lessons_model_url_glb`**: Enforces at the PostgreSQL table level that `lessons.model_url` always ends with `.glb` (`model_url LIKE '%.glb'`).
+- **Unique Indexes**:
+  - `learning_modules ("Slug")`
+  - `lessons ("Slug")`
+  - `lesson_checkpoints ("LessonId", "StepOrder")`
+  - `checkpoint_completions (learner_key, lesson_slug, step_order)` (`ix_checkpoint_completions_learner_lesson_step`)
+- **Least-Privilege Access**:
+  - Application traffic connects via `NAWWAR_DB_USER` (`nawwar_app`), provisioned on first container startup by `infra/postgres/init/10-create-app-role.sh`.

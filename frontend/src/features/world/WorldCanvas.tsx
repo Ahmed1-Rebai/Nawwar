@@ -10,6 +10,8 @@ export interface WorldCanvasProps {
   activeNodeName?: string;
   /** Optional 3D focus point [x, y, z] for the active checkpoint. */
   focusPoint?: [number, number, number];
+  /** Optional callback fired when a learner clicks a named 3D mesh node inside the .glb scene. */
+  onSelectNode?: (nodeName: string) => void;
 }
 
 /**
@@ -21,6 +23,7 @@ export default function WorldCanvas({
   modelUrl = '/models/lantern.glb',
   activeNodeName,
   focusPoint,
+  onSelectNode,
 }: WorldCanvasProps) {
   return (
     <div className="world-canvas" role="img" aria-label={label} data-model-url={modelUrl}>
@@ -30,7 +33,12 @@ export default function WorldCanvas({
         gl={{ antialias: true, powerPreference: 'high-performance' }}
       >
         <color attach="background" args={['#0f1b2d']} />
-        <WorldScene modelUrl={modelUrl} activeNodeName={activeNodeName} focusPoint={focusPoint} />
+        <WorldScene
+          modelUrl={modelUrl}
+          activeNodeName={activeNodeName}
+          focusPoint={focusPoint}
+          onSelectNode={onSelectNode}
+        />
         <OrbitControls
           enablePan={false}
           minDistance={2.5}

@@ -18,16 +18,16 @@ Its core objectives are:
 
 ## 2. Product Scope (Current vs. Planned)
 
-- **Implemented in Phase 1 (Technical Foundation)**:
+- **Implemented in Phase 1 & Phase 2 (`v0.1.0` – `v0.2.0`)**:
   - Reproducible Docker Compose stack (`db`, `api`, `frontend`, and optional `storage` profile).
-  - React 19 + TypeScript 7 + Vite 8 frontend shell with Arabic-first (`ar` / `rtl`) localization (`i18next`), language switcher (`ar`, `fr`, `en`), CSS logical layout, lazy-loaded React Three Fiber 3D demonstration scene, WebGL `ErrorBoundary`, and live backend connectivity status.
-  - ASP.NET Core 10 Minimal API (`Nawwar.Api`) with Arabic-first request localization (`ar`, `fr`, `en`), `/health/live`, `/health/ready` (EF Core PostgreSQL connectivity check), and `/api/v1/system/info`.
-  - PostgreSQL 18 database with automatic least-privilege application role provisioning (`infra/postgres/init/10-create-app-role.sh`) and persistent volume storage.
+  - React 19 + TypeScript 7 + Vite 8 frontend shell with Arabic-first (`ar` / `rtl`) localization (`i18next`), language switcher (`ar`, `fr`, `en`), CSS logical layout, lazy-loaded React Three Fiber 3D `.glb` scene (`WorldCanvas`, `WorldScene`), direct 3D mesh node picking, material disposal on unmount, `CurriculumExplorer` with persistent checkpoint completion, WebGL `ErrorBoundary`, and live backend connectivity status.
+  - ASP.NET Core 10 Minimal API (`Nawwar.Api`) with Arabic-first request localization (`ar`, `fr`, `en`), `/health/live`, `/health/ready`, `/api/v1/system/info`, `/api/v1/curriculum/modules`, `/api/v1/curriculum/lessons/{slug}`, `/api/v1/curriculum/progress`, and `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete`.
+  - PostgreSQL 18 database with automatic least-privilege application role provisioning (`infra/postgres/init/10-create-app-role.sh`), persistent volume storage, and curriculum/progress tables (`learning_modules`, `lessons` with `ck_lessons_model_url_glb`, `lesson_checkpoints`, `checkpoint_completions`).
   - Optional S3-compatible object storage service (`rustfs/rustfs:1.0.4`) under the `storage` Compose profile.
 - **Planned for Subsequent Phases** (see [`ROADMAP.md`](ROADMAP.md)):
-  - Domain schema and EF Core migrations for learners, curriculum modules, interactive 3D lessons, progress tracking, and assets (Phase 2).
-  - Authentication, authorization, and learner profiles (Phase 2).
-  - Interactive 3D educational scenes, glTF/GLB asset pipeline, and spatial audio/narration (Phase 3).
+  - Multi-user authentication, authorization, and learner accounts.
+  - S3-backed asset upload/streaming pipeline and spatial audio narration (Phase 3).
+  - Playwright E2E browser suite and release security audit (Phase 4).
 
 Never describe planned features as already implemented.
 

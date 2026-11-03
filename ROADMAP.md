@@ -36,21 +36,21 @@ flowchart LR
 
 ---
 
-## Phase 2 — Educational Domain Model, Persistence & Authentication (`v0.2.0`)
+## Phase 2 — Educational Domain Model, `.glb` 3D Lesson Pipeline & Progress Persistence (`v0.2.0`)
 
 - **Priority**: P1
-- **Status**: Planned (Not started)
+- **Status**: **Completed & Validated** (Curriculum domain, `.glb` 3D models & node picking, progress persistence; multi-user authentication scheduled next)
 - **Dependencies**: Phase 1
 - **Objectives**:
-  - Design and implement the core PostgreSQL schema and EF Core 10 migrations for:
-    - Localized learning modules, lessons, and interactive checkpoints (`ar`, `fr`, `en`).
-    - Learner profiles, authentication/authorization, and lesson progress tracking.
-  - Expose versioned REST endpoints under `/api/v1/modules`, `/api/v1/lessons`, and `/api/v1/auth` with Problem Details validation and integration tests against PostgreSQL.
-  - Create product specification and schema docs (`docs/product/PRODUCT_SPECIFICATION.md`, `docs/architecture/DATABASE_SCHEMA.md`, `docs/architecture/API_DESIGN.md`).
+  - Design and implement the core PostgreSQL schema (`learning_modules`, `lessons`, `lesson_checkpoints`, `checkpoint_completions`):
+    - Localized learning modules, `.glb` 3D lessons, and interactive checkpoints (`ar`, `fr`, `en`).
+    - Persistent learner checkpoint progress tracking (`GET /api/v1/curriculum/progress`, `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete`).
+  - Expose versioned REST endpoints under `/api/v1/curriculum/*` with Problem Details validation and integration tests.
+  - Create product specification, educational framework, design system, and schema/API docs (`docs/product/PRODUCT_SPECIFICATION.md`, `docs/product/EDUCATIONAL_FRAMEWORK.md`, `docs/design/DESIGN_SYSTEM.md`, `docs/architecture/DATABASE_SCHEMA.md`, `docs/architecture/API_DESIGN.md`).
 - **Acceptance Criteria**:
-  - [ ] EF Core migrations apply cleanly using the `nawwar_app` role on startup or via migration runner.
-  - [ ] Localized curriculum endpoints return Arabic content by default with full diacritics preserved.
-  - [ ] Authentication and authorization integration tests pass.
+  - [x] PostgreSQL schema and seed modules/lessons/checkpoints initialize cleanly using the `nawwar_app` role on startup.
+  - [x] Localized curriculum endpoints return Arabic content by default with full diacritics preserved, and all 3D models are in `.glb` format (`model/gltf-binary`).
+  - [x] Learner checkpoint completion persists across container restarts and updates the frontend progress summary.
 
 ---
 

@@ -35,6 +35,29 @@ export async function apiGet<T>(path: string, options: RequestOptions = {}): Pro
   return (await response.json()) as T;
 }
 
+export async function apiPost<TResponse, TBody>(
+  path: string,
+  body: TBody,
+  options: RequestOptions = {},
+): Promise<TResponse> {
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+  if (options.language) headers['Accept-Language'] = options.language;
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(body),
+    signal: options.signal,
+  });
+  if (!response.ok) {
+    throw new ApiError(response.status, `POST ${path} failed with HTTP ${response.status}`);
+  }
+  return (await response.json()) as TResponse;
+}
+
 /** Mirrors `SystemInfoResponse` in backend/src/Nawwar.Api/Features/System/SystemEndpoints.cs. */
 export interface SystemInfo {
   name: string;
@@ -95,6 +118,19 @@ export interface LessonDetail {
   checkpoints: LessonCheckpoint[];
 }
 
+export interface LessonProgress {
+  lessonSlug: string;
+  completedSteps: number[];
+  totalCheckpoints: number;
+}
+
+export interface LearnerProgress {
+  learnerKey: string;
+  totalCompletedSteps: number;
+  totalCheckpoints: number;
+  lessons: LessonProgress[];
+}
+
 export function getSystemInfo(options?: RequestOptions): Promise<SystemInfo> {
   return apiGet<SystemInfo>('/v1/system/info', options);
 }
@@ -105,4 +141,24 @@ export function getCurriculumModules(options?: RequestOptions): Promise<Curricul
 
 export function getLessonBySlug(slug: string, options?: RequestOptions): Promise<LessonDetail> {
   return apiGet<LessonDetail>(`/v1/curriculum/lessons/${encodeURIComponent(slug)}`, options);
+}
+
+export function getLearnerProgress(learnerKey = 'default', options?: RequestOptions): Promise<LearnerProgress> {
+  return apiGet<LearnerProgress>(
+    `/v1/curriculum/progress?learnerKey=${encodeURIComponent(learnerKey)}`,
+    options,
+  );
+}
+
+export function completeCheckpoint(
+  slug: string,
+  stepOrder: number,
+  learnerKey = 'default',
+  options?: RequestOptions,
+): Promise<LearnerProgress> {
+  return apiPost<LearnerProgress, { learnerKey: string }>(
+    `/v1/curriculum/lessons/${encodeURIComponent(slug)}/checkpoints/${stepOrder}/complete`,
+    { learnerKey },
+    options,
+  );
 }

@@ -35,3 +35,4 @@ public sealed class LessonCheckpoint
 
     public required string ExplanationEn { get; init; }
 }
+

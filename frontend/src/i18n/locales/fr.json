@@ -21,7 +21,10 @@
     "loading": "Chargement du programme…",
     "unavailable": "Impossible de charger les modules pédagogiques depuis le serveur.",
     "checkpointsTitle": "Points d’inspection dans la scène 3D",
-    "targetNode": "Nœud 3D ciblé"
+    "targetNode": "Nœud 3D ciblé",
+    "progressLabel": "Progression pédagogique",
+    "markComplete": "Valider ce point",
+    "completed": "Terminé"
   },
   "status": {
     "title": "État du serveur",
