@@ -1,0 +1,94 @@
+# PROGRESS.md — NAWWAR Implementation & Verification Log
+
+> This file is the single source of truth for implementation status across development sessions. Never mark a feature as completed unless it has been implemented and verified.
+
+---
+
+## 1. Current Project Phase
+
+- **Phase**: **Phase 1 — Docker-First Infrastructure, Documentation & Foundational Shell (`v0.1.0`)**
+- **Phase 1 Status**: **Completed & Validated** (2026-11-03)
+- **Next Phase**: Phase 2 — Educational Domain Model, Persistence & Authentication (`v0.2.0`)
+
+---
+
+## 2. Completed Features (Implemented & Verified)
+
+- [x] **Docker-First Infrastructure (Section 10.1)**:
+  - `docker-compose.yml` with `db` (`postgres:18-alpine`), `api` (`Nawwar.Api`), `frontend` (React 19 + `nginx-unprivileged`), and optional `storage` (`rustfs/rustfs:1.0.4` under `--profile storage`).
+  - `docker-compose.dev.yml` for hot-reload development (`dotnet watch` + Vite HMR) and localhost inspection ports.
+  - `docker-compose.prod.yml` for hardened production (`read_only: true`, `cap_drop: [ALL]`, `no-new-privileges:true`, internal `backend_net`).
+  - Multi-stage `backend/Dockerfile` and `frontend/Dockerfile` with dedicated `dev`, `test`, and non-root `runtime` stages.
+  - `.env.example` containing documented placeholders only, plus `.dockerignore` files at root, `frontend/`, and `backend/`.
+  - First-boot PostgreSQL initialization script (`infra/postgres/init/10-create-app-role.sh`) creating the least-privilege `nawwar_app` role.
+- [x] **ASP.NET Core 10 Minimal API (`backend/`)**:
+  - `Nawwar.slnx` with `Directory.Build.props` (`TreatWarningsAsErrors=true`, `Nullable=enable`, full ICU globalization) and `Directory.Packages.props`.
+  - Arabic-first request localization (`ar` default, `fr`, `en`) setting `Content-Language` response headers.
+  - `NawwarDbContext` registered with Npgsql (`EnableRetryOnFailure()`).
+  - `/health/live`, `/health/ready` (EF Core PostgreSQL connectivity check), `/api/v1/system/info`, and RFC 9457 Problem Details error responses.
+- [x] **React 19 + TypeScript 7 + R3F Frontend (`frontend/`)**:
+  - Arabic-first `<html lang="ar" dir="rtl">` shell with self-hosted `@fontsource-variable/noto-sans-arabic` WOFF2 font.
+  - `i18next` + `react-i18next` configuration with compile-time translation key parity (`satisfies typeof ar` across `ar.json`, `fr.json`, `en.json`), `localStorage` persistence, and automatic `<html lang dir>` updates.
+  - CSS logical properties layout (`frontend/src/index.css`).
+  - Code-split React Three Fiber 3D demonstration viewport (`WorldCanvas`, `WorldScene`) wrapped in `ErrorBoundary` and `Suspense`, honoring `prefers-reduced-motion: reduce`.
+  - `ApiStatus` component verifying live browser → nginx reverse proxy → API connectivity and displaying resolved server culture.
+- [x] **Mandatory Project Documentation & Multi-Model Continuity (Sections 10.2–10.4)**:
+  - Root documentation: `AGENTS.md`, `GEMINI.md`, `ARCHITECTURE.md`, `PROGRESS.md`, `ROADMAP.md`, `DECISIONS.md`, `CHANGELOG.md`, `README.md`.
+  - Focused documentation: `docs/infrastructure/DOCKER.md`, `docs/infrastructure/ENVIRONMENT.md`, `docs/architecture/LOCALIZATION.md`, `docs/architecture/THREE_D_ARCHITECTURE.md`, `docs/agent-handoffs/README.md`, and `docs/agent-handoffs/HANDOFF_PHASE_02_DOMAIN_AND_AUTH.md`.
+
+---
+
+## 3. Features In Progress
+
+- None. Phase 1 is complete and self-contained.
+
+---
+
+## 4. Pending Tasks (Phase 2 & Beyond)
+
+- [ ] Phase 2: Design and implement PostgreSQL domain entities and EF Core migrations for learning modules, lessons, and learner progress.
+- [ ] Phase 2: Implement authentication and authorization (`Nawwar.Api` + frontend auth state).
+- [ ] Phase 3: Connect `storage` (`rustfs`) asset pipeline for glTF/GLB 3D lesson scenes and spatial audio narration.
+- [ ] Phase 4: Add Playwright end-to-end browser tests and complete production security audit.
+
+---
+
+## 5. Known Bugs & Technical Blockers
+
+- **Known Application Bugs**: None.
+- **Environment Notes Recorded**:
+  - Upstream `minio/minio` community images are no longer publicly pullable from Docker Hub; `rustfs/rustfs:1.0.4` is used for the optional S3-compatible `storage` profile (see `ADR-0007` in [`DECISIONS.md`](DECISIONS.md)).
+  - Ports `80` and `8080` are occupied by other services on the primary host; `NAWWAR_WEB_PORT` defaults to `8090` in `.env.example` and `docker-compose.yml` (see `ADR-0001`).
+
+---
+
+## 6. Tests Performed and Results (2026-11-03)
+
+| Verification Step | Command | Result |
+|---|---|---|
+| Backend compile & xUnit v3 integration tests | `docker build --target test -t nawwar/api:test ./backend` | **PASSED** (`0 Warnings`, `0 Errors`, `7/7 tests passed` in `Nawwar.Api.Tests`) |
+| Frontend lint (`oxlint`), typecheck (`tsc -b`), unit tests (`vitest`), and prod build (`vite build`) | `docker build --target test -t nawwar/frontend:test ./frontend` & `docker build -t nawwar/frontend:latest ./frontend` | **PASSED** (`0 warnings`, `0 errors`, `10/10 tests passed` across `i18n.test.ts` and `App.test.tsx`) |
+| Compose configuration validation (`base`, `dev`, `prod`) | `docker compose config -q` (+ `-f docker-compose.dev.yml` / `-f docker-compose.prod.yml`) | **PASSED** |
+| Full stack startup & health checks | `docker compose up --build -d` & `docker compose ps` | **PASSED** (`nawwar-db-1`, `nawwar-api-1`, `nawwar-frontend-1` all `healthy`) |
+| Reverse proxy & localization verification | `curl http://localhost:8090/healthz`, `/`, and `/api/v1/system/info` (`ar`, `fr`, `en`) | **PASSED** (`200 OK`, `Content-Language: ar/fr/en`, `<html lang="ar" dir="rtl">`) |
+| Non-root container user verification | `docker compose exec api id` & `docker compose exec frontend id` | **PASSED** (`uid=1654(app)` for `api`, `uid=101(nginx)` for `frontend`) |
+| Database volume persistence across restart | Created UTF-8 Arabic probe row as `nawwar_app`, ran `docker compose down && docker compose up -d`, queried row (`1\|العِلْمُ نُورٌ`), cleaned up probe table | **PASSED** |
+
+---
+
+## 7. Multi-Model Handoff Tracking (Section 10.4.H)
+
+- **Current model role**: Premium reasoning model (Architecture, infrastructure validation, and documentation continuity).
+- **Task completed**: Phase 1 Docker-first infrastructure, backend/frontend foundation, end-to-end Compose verification, and mandatory documentation suite.
+- **Next model recommendation**:
+  1. **Premium reasoning model** (Planning mode, High thinking) to design the Phase 2 educational domain schema and authentication architecture.
+  2. **Strong coding model** (Planning mode, Medium/High thinking) to implement the EF Core migrations, vertical slice endpoints, and frontend views.
+- **Relevant handoff document**: [`docs/agent-handoffs/HANDOFF_PHASE_02_DOMAIN_AND_AUTH.md`](docs/agent-handoffs/HANDOFF_PHASE_02_DOMAIN_AND_AUTH.md).
+
+---
+
+## 8. What Should the Next Agent Do First?
+
+1. Read [`AGENTS.md`](AGENTS.md), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`PROGRESS.md`](PROGRESS.md), and [`docs/agent-handoffs/HANDOFF_PHASE_02_DOMAIN_AND_AUTH.md`](docs/agent-handoffs/HANDOFF_PHASE_02_DOMAIN_AND_AUTH.md).
+2. Verify the stack is healthy with `docker compose ps` (or start it with `docker compose up -d`).
+3. Propose the Phase 2 database schema (`docs/architecture/DATABASE_SCHEMA.md`) and API contract (`docs/architecture/API_DESIGN.md`) before writing EF Core migrations.

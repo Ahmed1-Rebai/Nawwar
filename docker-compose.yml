@@ -1,0 +1,181 @@
+# =============================================================================
+# NAWWAR — Canonical Docker Compose Stack
+# =============================================================================
+# Quick start:
+#   cp .env.example .env
+#   docker compose up --build -d
+#   docker compose ps
+#   docker compose logs -f
+#   docker compose down
+#
+# Optional S3-compatible object storage (3D assets, images, audio):
+#   docker compose --profile storage up --build -d
+#
+# Development hot-reload overrides:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
+#
+# Production hardened overrides:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+# =============================================================================
+
+name: nawwar
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 18 — Stateful relational database
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env (copy from .env.example)}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env (copy from .env.example)}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env (copy from .env.example)}
+      NAWWAR_DB_USER: ${NAWWAR_DB_USER:?Set NAWWAR_DB_USER in .env (copy from .env.example)}
+      NAWWAR_DB_PASSWORD: ${NAWWAR_DB_PASSWORD:?Set NAWWAR_DB_PASSWORD in .env (copy from .env.example)}
+      TZ: ${TZ:-UTC}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$NAWWAR_DB_USER\" -d \"$$POSTGRES_DB\" -h 127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          memory: 128M
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # ASP.NET Core 10 API — Backend service
+  # ---------------------------------------------------------------------------
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runtime
+    image: nawwar/api:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__Default: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${NAWWAR_DB_USER};Password=${NAWWAR_DB_PASSWORD}"
+      S3__Endpoint: "http://storage:9000"
+      S3__Region: ${S3_REGION:-us-east-1}
+      S3__Bucket: ${S3_BUCKET_ASSETS:-nawwar-assets}
+      TZ: ${TZ:-UTC}
+    networks:
+      - backend_net
+      - frontend_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health/ready >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          memory: 128M
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # Frontend + Reverse Proxy (React 19 / Three.js static bundle + nginx proxy)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runtime
+    image: nawwar/frontend:latest
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${NAWWAR_WEB_PORT:-8090}:8080"
+    networks:
+      - frontend_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/healthz >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          memory: 64M
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # Optional S3-Compatible Object Storage (RustFS, runs non-root UID 10001)
+  # Activate with: docker compose --profile storage up -d
+  # ---------------------------------------------------------------------------
+  storage:
+    image: rustfs/rustfs:1.0.4
+    profiles: ["storage"]
+    restart: unless-stopped
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: "0.0.0.0:9000"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_CONSOLE_ADDRESS: "0.0.0.0:9001"
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY:-}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY:-}
+      RUSTFS_REGION: ${S3_REGION:-us-east-1}
+    ports:
+      - "127.0.0.1:${NAWWAR_S3_API_PORT:-9000}:9000"
+      - "127.0.0.1:${NAWWAR_S3_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - storage_data:/data
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:9000/health >/dev/null || wget -qO- http://127.0.0.1:9001/ >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          memory: 128M
+    logging: *default-logging
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  storage_data:
+

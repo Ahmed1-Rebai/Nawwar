@@ -1,0 +1,14 @@
+# Keep the build context small and free of local artefacts/secrets.
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+*.log
+.env
+.env.*
+.vscode/
+.idea/
+Dockerfile
+.dockerignore
+

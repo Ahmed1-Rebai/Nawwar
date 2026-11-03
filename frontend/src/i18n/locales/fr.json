@@ -1,0 +1,30 @@
+{
+  "app": {
+    "name": "Nawwar",
+    "latinName": "NAWWAR",
+    "tagline": "Une plateforme éducative interactive en 3D",
+    "motto": "Le savoir est lumière"
+  },
+  "language": {
+    "label": "Langue"
+  },
+  "world": {
+    "title": "Aperçu de la scène 3D",
+    "description": "Scène de démonstration pour valider le pipeline de rendu 3D. Faites glisser pour faire pivoter la caméra.",
+    "canvasLabel": "Scène 3D de démonstration montrant un objet lumineux",
+    "loading": "Chargement de la scène…",
+    "unavailable": "Le rendu 3D n’a pas pu démarrer sur cet appareil (WebGL indisponible)."
+  },
+  "status": {
+    "title": "État du serveur",
+    "checking": "Vérification…",
+    "online": "Connecté",
+    "offline": "Indisponible",
+    "version": "Version",
+    "serverLanguage": "Langue de la réponse"
+  },
+  "footer": {
+    "phase": "Phase 1 : socle technique"
+  }
+}
+

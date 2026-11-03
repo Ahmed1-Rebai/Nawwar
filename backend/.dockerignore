@@ -1,0 +1,14 @@
+# Keep the build context small and free of local artefacts/secrets.
+**/bin/
+**/obj/
+**/TestResults/
+**/*.user
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.log
+**/.env
+**/.env.*
+Dockerfile
+.dockerignore
+

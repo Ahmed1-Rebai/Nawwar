@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Nawwar.Api/Nawwar.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Nawwar.Api.Tests/Nawwar.Api.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,82 @@
+# =============================================================================
+# NAWWAR — Development Overrides (Hot Reload + Direct Service Inspection)
+# =============================================================================
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
+#
+# Provides:
+# - Vite dev server with HMR on http://localhost:${NAWWAR_FRONTEND_DEV_PORT:-5173}
+#   proxying `/api` to `http://api:8080`.
+# - `dotnet watch` hot reload on http://localhost:${NAWWAR_API_DEV_PORT:-5080}
+#   with OpenAPI enabled at `/openapi/v1.json`.
+# - Optional localhost PostgreSQL port `${NAWWAR_DB_DEV_PORT:-54329}` for GUI/CLI inspection.
+# =============================================================================
+
+services:
+  db:
+    ports:
+      - "127.0.0.1:${NAWWAR_DB_DEV_PORT:-54329}:5432"
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: dev
+    image: nawwar/api:dev
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - "127.0.0.1:${NAWWAR_API_DEV_PORT:-5080}:8080"
+    volumes:
+      - ./backend:/src:rw
+      - api_nuget_cache:/home/app/.nuget/packages
+      - api_bin:/src/src/Nawwar.Api/bin
+      - api_obj:/src/src/Nawwar.Api/obj
+      - api_tests_bin:/src/tests/Nawwar.Api.Tests/bin
+      - api_tests_obj:/src/tests/Nawwar.Api.Tests/obj
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health/ready >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 45s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1536M
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    image: nawwar/frontend:dev
+    environment:
+      NODE_ENV: development
+      VITE_API_PROXY_TARGET: http://api:8080
+    ports: !override
+      - "${NAWWAR_FRONTEND_DEV_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app:rw
+      - frontend_node_modules:/app/node_modules
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:5173/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1024M
+
+volumes:
+  frontend_node_modules:
+  api_nuget_cache:
+  api_bin:
+  api_obj:
+  api_tests_bin:
+  api_tests_obj:
+
