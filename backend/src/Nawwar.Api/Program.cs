@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
+using Nawwar.Api.Features.Curriculum;
 using Nawwar.Api.Features.System;
 using Nawwar.Api.Infrastructure.Localization;
 using Nawwar.Api.Infrastructure.Persistence;
@@ -47,7 +48,9 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions
 
 var api = app.MapGroup("/api/v1");
 api.MapSystemEndpoints();
+api.MapCurriculumEndpoints();
 
+await app.InitializeCurriculumAsync();
 await app.RunAsync();
 
 /// <summary>Entry point; public partial for <c>WebApplicationFactory</c> in integration tests.</summary>

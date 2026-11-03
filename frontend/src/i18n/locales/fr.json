@@ -10,10 +10,18 @@
   },
   "world": {
     "title": "Aperçu de la scène 3D",
-    "description": "Scène de démonstration pour valider le pipeline de rendu 3D. Faites glisser pour faire pivoter la caméra.",
-    "canvasLabel": "Scène 3D de démonstration montrant un objet lumineux",
-    "loading": "Chargement de la scène…",
-    "unavailable": "Le rendu 3D n’a pas pu démarrer sur cet appareil (WebGL indisponible)."
+    "description": "Scène 3D interactive au format GLB. Faites glisser pour pivoter la caméra ou choisissez un point d’inspection.",
+    "canvasLabel": "Scène 3D affichant le modèle pédagogique au format GLB",
+    "loading": "Chargement du modèle 3D GLB…",
+    "unavailable": "Le rendu 3D n’a pas pu démarrer sur cet appareil (WebGL indisponible).",
+    "assetBadge": "Modèle 3D (.glb)"
+  },
+  "curriculum": {
+    "title": "Modules pédagogiques interactifs",
+    "loading": "Chargement du programme…",
+    "unavailable": "Impossible de charger les modules pédagogiques depuis le serveur.",
+    "checkpointsTitle": "Points d’inspection dans la scène 3D",
+    "targetNode": "Nœud 3D ciblé"
   },
   "status": {
     "title": "État du serveur",
@@ -24,7 +32,6 @@
     "serverLanguage": "Langue de la réponse"
   },
   "footer": {
-    "phase": "Phase 1 : socle technique"
+    "phase": "Phase 2 : programme interactif et modèles 3D GLB"
   }
 }
-

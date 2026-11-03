@@ -54,9 +54,10 @@ body {
 }
 
 h1,
-h2 {
-  margin-block: 0 var(--space-3);
-  line-height: 1.3;
+h2,
+h3 {
+  margin-block: 0 var(--space-2);
+  line-height: 1.35;
 }
 
 p {
@@ -131,41 +132,47 @@ button {
 
 .app__main {
   flex: 1;
-  inline-size: min(1200px, 100%);
+  inline-size: min(1280px, 100%);
   margin-inline: auto;
   padding: var(--space-8) var(--space-6);
 }
 
 .hero {
-  margin-block-end: var(--space-8);
+  margin-block-end: var(--space-6);
   text-align: start;
 }
 
 .hero h1 {
-  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
 }
 
 .hero__tagline {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   color: var(--color-text-muted);
 }
 
 .hero__motto {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: var(--color-accent);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
   gap: var(--space-6);
   align-items: start;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 960px) {
   .grid {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+.sidebar-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
 .card {
@@ -179,8 +186,28 @@ button {
   color: var(--color-text-muted);
 }
 
+.world-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-end: var(--space-2);
+}
+
+.world-badge {
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  color: var(--color-accent);
+  font-size: 0.8rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
 .world-canvas {
-  block-size: clamp(280px, 50vh, 480px);
+  block-size: clamp(320px, 54vh, 520px);
   border-radius: var(--radius-md);
   overflow: hidden;
   background: #0f1b2d;
@@ -190,6 +217,120 @@ button {
   display: grid;
   place-items: center;
   color: var(--color-text-muted);
+}
+
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block-end: var(--space-6);
+}
+
+.module-item {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+}
+
+.module-item h3 {
+  font-size: 1.05rem;
+  color: var(--color-text);
+}
+
+.lesson-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.lesson-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  inline-size: 100%;
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-align: start;
+  cursor: pointer;
+}
+
+.lesson-button[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  background: #243759;
+}
+
+.lesson-button__title {
+  font-weight: 600;
+}
+
+.lesson-button__badge {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.checkpoints h3 {
+  font-size: 1rem;
+  margin-block-end: var(--space-3);
+}
+
+.checkpoint-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-end: var(--space-3);
+}
+
+.checkpoint-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.checkpoint-tab[aria-selected='true'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #1a1206;
+  font-weight: 600;
+}
+
+.checkpoint-tab__step {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.8rem;
+}
+
+.checkpoint-detail {
+  padding: var(--space-4);
+  border-inline-start: 3px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+}
+
+.checkpoint-detail__explanation {
+  color: var(--color-text) !important;
+}
+
+.checkpoint-detail__node {
+  margin-block-end: 0;
+  font-size: 0.85rem;
 }
 
 .notice {

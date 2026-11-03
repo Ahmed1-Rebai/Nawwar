@@ -1,6 +1,13 @@
 /** Typed client for the NAWWAR API. Requests are same-origin (`/api`), proxied by Vite (dev) or nginx (prod). */
 const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
+export const GLB_MIME_TYPE = 'model/gltf-binary';
+export const GLB_EXTENSION = '.glb';
+
+export function isValidGlbUrl(url: string): boolean {
+  return url.trim().toLowerCase().endsWith(GLB_EXTENSION);
+}
+
 export class ApiError extends Error {
   readonly status: number;
 
@@ -38,7 +45,64 @@ export interface SystemInfo {
   supportedCultures: string[];
 }
 
+export interface LessonSummary {
+  slug: string;
+  order: number;
+  title: string;
+  objective: string;
+  modelUrl: string;
+  modelFormat: string;
+  checkpointCount: number;
+}
+
+export interface LearningModule {
+  slug: string;
+  order: number;
+  title: string;
+  summary: string;
+  lessons: LessonSummary[];
+}
+
+export interface CurriculumOverview {
+  culture: string;
+  direction: 'rtl' | 'ltr';
+  modules: LearningModule[];
+}
+
+export interface LessonAsset {
+  url: string;
+  format: string;
+  cameraPosition: [number, number, number];
+  cameraTarget: [number, number, number];
+}
+
+export interface LessonCheckpoint {
+  stepOrder: number;
+  targetNodeName: string;
+  focusPoint: [number, number, number];
+  title: string;
+  explanation: string;
+}
+
+export interface LessonDetail {
+  slug: string;
+  moduleSlug: string;
+  culture: string;
+  direction: 'rtl' | 'ltr';
+  title: string;
+  objective: string;
+  asset: LessonAsset;
+  checkpoints: LessonCheckpoint[];
+}
+
 export function getSystemInfo(options?: RequestOptions): Promise<SystemInfo> {
   return apiGet<SystemInfo>('/v1/system/info', options);
 }
 
+export function getCurriculumModules(options?: RequestOptions): Promise<CurriculumOverview> {
+  return apiGet<CurriculumOverview>('/v1/curriculum/modules', options);
+}
+
+export function getLessonBySlug(slug: string, options?: RequestOptions): Promise<LessonDetail> {
+  return apiGet<LessonDetail>(`/v1/curriculum/lessons/${encodeURIComponent(slug)}`, options);
+}

@@ -52,18 +52,23 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 
 ## 4. 3D Rendering Architecture (`frontend/src/features/world/`)
 
-- **Code splitting**: [`WorldCanvas.tsx`](frontend/src/features/world/WorldCanvas.tsx) is loaded via `React.lazy` in `App.tsx`, keeping the `three` + `@react-three/fiber` + `@react-three/drei` bundle (~247 kB gzipped) out of the initial critical path (~90 kB gzipped).
-- **Scene graph** ([`WorldScene.tsx`](frontend/src/features/world/WorldScene.tsx)):
-  - Renders a demonstration lantern mesh (`icosahedronGeometry` + emissive `meshStandardMaterial`), ground disc, hemisphere/directional/point lights, and bounded `OrbitControls`.
+- **Code splitting**: [`WorldCanvas.tsx`](frontend/src/features/world/WorldCanvas.tsx) is loaded via `React.lazy` in `App.tsx`, keeping the `three` + `@react-three/fiber` + `@react-three/drei` bundle out of the initial critical path.
+- **Binary `.glb` Pipeline** ([`WorldScene.tsx`](frontend/src/features/world/WorldScene.tsx)):
+  - Enforces `.glb` format (`isValidGlbUrl(modelUrl)`) and loads binary glTF 2.0 models (`/models/lantern.glb`, `/models/solar-system.glb`, `/models/crystal-lattice.glb`) via `useGLTF` from `@react-three/drei`.
+  - Clones the loaded scene graph so material highlight state stays isolated per instance, highlights the mesh matching the active checkpoint's `TargetNodeName`, and renders a focus ring at the checkpoint's 3D `FocusPoint`.
   - Checks `window.matchMedia('(prefers-reduced-motion: reduce)')` and pauses frame rotation when reduced motion is requested.
-- **Fault isolation**: [`ErrorBoundary.tsx`](frontend/src/components/ErrorBoundary.tsx) catches WebGL context creation failures and displays a localized fallback notice.
+- **Fault isolation**: [`ErrorBoundary.tsx`](frontend/src/components/ErrorBoundary.tsx) catches WebGL or asset errors and displays a localized fallback notice.
 
 ---
 
-## 5. Educational Content Architecture
+## 5. Educational Content Architecture (`Features/Curriculum` & `features/curriculum`)
 
-- **Current state (Phase 1)**: Only the foundational 3D viewport and localization plumbing are implemented; no curriculum entities exist yet.
-- **Target design for Phase 2**: Curriculum modules, lessons, and localized text/audio metadata will be stored in PostgreSQL and served via `/api/v1/lessons`, while heavy binary 3D scenes (`.glb`) and audio files will be served from the S3-compatible `nawwar-assets` bucket.
+- **Domain entities** ([`backend/src/Nawwar.Api/Features/Curriculum/Domain/`](backend/src/Nawwar.Api/Features/Curriculum/Domain/Lesson.cs)):
+  - `LearningModule` (`learning_modules`): localized module metadata (`ar`, `fr`, `en`) and display order.
+  - `Lesson` (`lessons`): localized title/objective, `.glb` asset URL (`model_url` enforced by check constraint `ck_lessons_model_url_glb`), `ModelFormat` (`model/gltf-binary`), and camera coordinates.
+  - `LessonCheckpoint` (`lesson_checkpoints`): ordered 3D inspection steps referencing a named node (`TargetNodeName`) and 3D focus point inside the `.glb` model.
+- **Frontend Explorer** ([`CurriculumExplorer.tsx`](frontend/src/features/curriculum/CurriculumExplorer.tsx)):
+  - Fetches `/api/v1/curriculum/modules` and `/api/v1/curriculum/lessons/{slug}` with `Accept-Language` and synchronizes the active `.glb` model and checkpoint node with `WorldCanvas`.
 
 ---
 
@@ -97,7 +102,7 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 - **Engine**: PostgreSQL 18 (`postgres:18-alpine`) with persistent data stored in the `postgres_data` volume at `/var/lib/postgresql`.
 - **Context**: [`NawwarDbContext.cs`](backend/src/Nawwar.Api/Infrastructure/Persistence/NawwarDbContext.cs) registered with Npgsql (`EnableRetryOnFailure()`) in [`PersistenceSetup.cs`](backend/src/Nawwar.Api/Infrastructure/Persistence/PersistenceSetup.cs).
 - **Provisioning**: On first initialization of an empty volume, [`infra/postgres/init/10-create-app-role.sh`](infra/postgres/init/10-create-app-role.sh) creates the non-superuser role `NAWWAR_DB_USER` (`nawwar_app`), transfers ownership of database `POSTGRES_DB` (`nawwar`) to it, and revokes `PUBLIC` connect privileges.
-- **Schema state**: No domain tables exist yet in Phase 1; `/health/ready` verifies live database connectivity via `AddDbContextCheck<NawwarDbContext>("database")`.
+- **Schema & Seeding**: [`CurriculumInitializer.cs`](backend/src/Nawwar.Api/Infrastructure/Persistence/CurriculumInitializer.cs) ensures the `learning_modules`, `lessons`, and `lesson_checkpoints` tables exist on startup and seeds the initial 3 Arabic/French/English modules and `.glb` lessons (see [`docs/architecture/DATABASE_SCHEMA.md`](docs/architecture/DATABASE_SCHEMA.md)).
 
 ---
 
@@ -108,6 +113,8 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 | `GET /health/live` | Process liveness probe (no DB check) | Public | `200 OK` (`Healthy`) |
 | `GET /health/ready` | Readiness probe (verifies PostgreSQL connectivity via `NawwarDbContext`) | Internal / Probe | `200 OK` (`Healthy`) or `503 Service Unavailable` |
 | `GET /api/v1/system/info` | Service metadata and resolved request culture/direction | Public | `200 OK` JSON (`SystemInfoResponse`) + `Content-Language` header |
+| `GET /api/v1/curriculum/modules` | Localized list of learning modules and `.glb` lesson summaries | Public | `200 OK` JSON (`CurriculumOverviewResponse`) |
+| `GET /api/v1/curriculum/lessons/{slug}` | Localized `.glb` lesson detail, camera config, and 3D scene checkpoints | Public | `200 OK` JSON (`LessonDetailResponse`) or `404` Problem Details |
 | `GET /openapi/v1.json` | OpenAPI 3 document (`Development` environment only) | Dev only | `200 OK` JSON |
 
 ---

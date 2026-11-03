@@ -117,3 +117,22 @@ This log records significant technical and architectural decisions made for NAWW
 - **Consequences**:
   - Standard AWS S3 / MinIO SDKs work unchanged against `http://storage:9000` when `--profile storage` is enabled.
 
+---
+
+## ADR-0008: Mandatory Binary glTF 2.0 (`.glb`) Standard for 3D Educational Assets
+
+- **Date**: 2026-11-03
+- **Status**: Accepted
+- **Context**: Interactive 3D educational lessons require self-contained 3D models with named scene-graph nodes for interactive checkpoints, fast network transfer, and deterministic loading in React Three Fiber (`useGLTF`).
+- **Decision**:
+  - Standardize exclusively on binary glTF 2.0 (`.glb`, MIME type `model/gltf-binary`) for all 3D lesson assets.
+  - Enforce the `.glb` extension across all three layers:
+    1. PostgreSQL check constraint `ck_lessons_model_url_glb` (`model_url LIKE '%.glb'`) on the `lessons` table.
+    2. Backend domain validation `Lesson.IsValidGlbUrl(url)`.
+    3. Frontend validation `isValidGlbUrl(url)` in `api.ts` and `WorldScene.tsx`, plus explicit `model/gltf-binary` MIME configuration in `frontend/nginx/default.conf`.
+- **Alternatives Considered**:
+  - Multi-file `.gltf` + `.bin` + loose texture files: rejected because relative buffer/texture URI resolution is error-prone across proxies and increases HTTP round-trips.
+  - Legacy `.obj` / `.fbx`: rejected due to larger payloads and lack of standardized PBR material definitions.
+- **Consequences**:
+  - Every lesson asset is a single, self-contained `.glb` binary with named nodes (`TargetNodeName`) that can be highlighted directly by curriculum checkpoints.
+
