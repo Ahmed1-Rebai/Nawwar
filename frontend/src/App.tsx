@@ -1,35 +1,91 @@
-import { lazy, Suspense, useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { LanguageSwitcher } from './components/LanguageSwitcher';
-import { type ActiveSceneState, CurriculumExplorer } from './features/curriculum/CurriculumExplorer';
+import { AppFooter } from './components/layout/AppFooter';
+import { AppHeader } from './components/layout/AppHeader';
+import { AgeWorldSelector } from './features/age-selector/AgeWorldSelector';
+import { CurriculumWorkspace } from './features/curriculum/CurriculumWorkspace';
+import { ParentProgressPanel } from './features/progress/ParentProgressPanel';
 import { ApiStatus } from './features/system/ApiStatus';
+import {
+  completeActivity,
+  getAgeGroups,
+  getLearnerProgress,
+  type AgeGroupSummary,
+  type LearnerProgress,
+} from './lib/api';
 
-const WorldCanvas = lazy(() => import('./features/world/WorldCanvas'));
+const DEFAULT_LEARNER_KEY = 'default';
+
+type OverviewState =
+  | { status: 'loading' }
+  | { status: 'error' }
+  | {
+      status: 'ready';
+      requestedLanguage: string;
+      ageGroups: AgeGroupSummary[];
+    };
 
 export default function App() {
-  const { t } = useTranslation();
-  const [scene, setScene] = useState<ActiveSceneState>({
-    modelUrl: '/models/lantern.glb',
-    lessonTitle: '',
-    lessonObjective: '',
-  });
+  const { t, i18n } = useTranslation();
+  const [selectedAge, setSelectedAge] = useState<number | null>(null);
+  const [showParentProgress, setShowParentProgress] = useState<boolean>(false);
+  const [overview, setOverview] = useState<OverviewState>({ status: 'loading' });
+  const [progress, setProgress] = useState<LearnerProgress | null>(null);
 
-  const handleSceneChange = useCallback((next: ActiveSceneState) => {
-    setScene(next);
-  }, []);
+  useEffect(() => {
+    const controller = new AbortController();
+    const requestedLanguage = i18n.language;
+
+    Promise.all([
+      getAgeGroups({ language: requestedLanguage, signal: controller.signal }),
+      getLearnerProgress(DEFAULT_LEARNER_KEY, {
+        language: requestedLanguage,
+        signal: controller.signal,
+      }).catch(() => null),
+    ])
+      .then(([ageGroupsResponse, learnerProgress]) => {
+        setOverview({
+          status: 'ready',
+          requestedLanguage,
+          ageGroups: ageGroupsResponse.ageGroups,
+        });
+        if (learnerProgress) {
+          setProgress(learnerProgress);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) {
+          console.warn('Age groups fetch failed', error);
+          setOverview({ status: 'error' });
+        }
+      });
+
+    return () => controller.abort();
+  }, [i18n.language]);
+
+  const handleCompleteActivity = (activitySlug: string) => {
+    completeActivity(activitySlug, DEFAULT_LEARNER_KEY, { language: i18n.language })
+      .then((updated) => {
+        setProgress(updated);
+      })
+      .catch((error: unknown) => {
+        console.warn('Activity completion failed', error);
+      });
+  };
+
+  const isLoading =
+    overview.status === 'loading' ||
+    (overview.status === 'ready' && overview.requestedLanguage !== i18n.language);
 
   return (
     <div className="app">
-      <header className="app__header">
-        <div className="brand">
-          <span className="brand__name">{t('app.name')}</span>
-          <span className="brand__latin" lang="en" dir="ltr">
-            {t('app.latinName')}
-          </span>
-        </div>
-        <LanguageSwitcher />
-      </header>
+      <AppHeader
+        selectedAge={selectedAge}
+        onSelectAge={(age) => setSelectedAge(age)}
+        totalCompleted={progress?.totalCompletedActivities ?? 0}
+        totalActivities={progress?.totalActivities ?? 0}
+        onToggleProgress={() => setShowParentProgress((prev) => !prev)}
+      />
 
       <main className="app__main">
         <section className="hero">
@@ -38,36 +94,39 @@ export default function App() {
           <p className="hero__motto">{t('app.motto')}</p>
         </section>
 
-        <div className="grid">
-          <section className="card card--world" aria-labelledby="world-title">
-            <div className="world-header">
-              <h2 id="world-title">{scene.lessonTitle || t('world.title')}</h2>
-              <span className="world-badge" dir="ltr">
-                {scene.modelUrl}
-              </span>
-            </div>
-            <p>{scene.lessonObjective || t('world.description')}</p>
-            <ErrorBoundary fallback={<p className="notice">{t('world.unavailable')}</p>}>
-              <Suspense fallback={<div className="world-canvas world-canvas--loading">{t('world.loading')}</div>}>
-                <WorldCanvas
-                  label={t('world.canvasLabel')}
-                  modelUrl={scene.modelUrl}
-                  activeNodeName={scene.activeNodeName}
-                  focusPoint={scene.focusPoint}
-                  onSelectNode={scene.onSelectNode}
-                />
-              </Suspense>
-            </ErrorBoundary>
-          </section>
+        {showParentProgress && progress && (
+          <ParentProgressPanel
+            progress={progress}
+            onClose={() => setShowParentProgress(false)}
+          />
+        )}
 
-          <div className="sidebar-stack">
-            <CurriculumExplorer onSceneChange={handleSceneChange} />
-            <ApiStatus />
-          </div>
+        {isLoading && <p>{t('curriculum.loading')}</p>}
+        {overview.status === 'error' && <p className="notice">{t('curriculum.unavailable')}</p>}
+
+        {overview.status === 'ready' && !isLoading && selectedAge === null && (
+          <AgeWorldSelector
+            ageGroups={overview.ageGroups}
+            onSelectAge={(ageYears) => setSelectedAge(ageYears)}
+          />
+        )}
+
+        {selectedAge !== null && (
+          <CurriculumWorkspace
+            key={selectedAge}
+            ageYears={selectedAge}
+            completedActivitySlugs={progress?.completedActivitySlugs ?? []}
+            onCompleteActivity={handleCompleteActivity}
+            onBackToAges={() => setSelectedAge(null)}
+          />
+        )}
+
+        <div className="status-footer-section">
+          <ApiStatus />
         </div>
       </main>
 
-      <footer className="app__footer">{t('footer.phase')}</footer>
+      <AppFooter />
     </div>
   );
 }

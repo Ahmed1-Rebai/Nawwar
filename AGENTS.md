@@ -30,19 +30,19 @@ Its core engineering objectives are:
 All development must follow this exact sequence (see [`ROADMAP.md`](ROADMAP.md) and [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md)):
 - **PHASE A — Product Realignment & Repository Audit** *(Completed)*
 - **PHASE B — Complete Age-Based Curriculum Design (`docs/product/AGE_BASED_CURRICULUM.md`)** *(Completed)*
-- **PHASE C — Curriculum Data Model & Content Architecture** *(Proposed — Awaiting Approval)*
-- **PHASE D — Main Age-Selection Experience & Educational Navigation**
-- **PHASE E — Implement Actual Courses & Age-Appropriate Activities**
-- **PHASE F — Integrate Playful 3D Scenes into Educational Lessons**
-- **PHASE G — Progress Tracking & Parent Experience**
-- **PHASE H — Authentication & Learner Accounts** *(Deferred until Curriculum & Activities are complete)*
+- **PHASE C — Curriculum Data Model & Content Architecture** *(Completed)*
+- **PHASE D — Main Age-Selection Experience & Educational Navigation** *(Completed)*
+- **PHASE E — Implement Actual Courses & Age-Appropriate Activities** *(Completed)*
+- **PHASE F — Integrate Playful 3D Scenes into Educational Lessons** *(Completed)*
+- **PHASE G — Progress Tracking & Parent Experience** *(Completed)*
+- **PHASE H — Authentication & Learner Accounts** *(Deferred until after PHASE G — Next Phase)*
 - **PHASE I — Final Localization, Optimization & Production Readiness**
 
-- **Currently Implemented Infrastructure Baseline**:
+- **Currently Implemented Baseline (`PHASE A` → `PHASE G`)**:
   - Reproducible Docker Compose stack (`db`, `api`, `frontend`, and optional `storage` profile).
-  - React 19 + TypeScript 7 + Vite 8 frontend shell with Arabic-first (`ar` / `rtl`) localization (`i18next`), CSS logical layout, lazy-loaded React Three Fiber 3D `.glb` scene (`WorldCanvas`, `WorldScene`), direct 3D mesh node picking, material disposal on unmount, WebGL `ErrorBoundary`, and live backend connectivity status.
-  - ASP.NET Core 10 Minimal API (`Nawwar.Api`) with Arabic-first request localization (`ar`, `fr`, `en`), `/health/live`, `/health/ready`, `/api/v1/system/info`, and initial prototype curriculum endpoints (scheduled to be replaced by the `PHASE C` age-based curriculum schema upon approval).
-  - PostgreSQL 18 database with automatic least-privilege application role provisioning (`infra/postgres/init/10-create-app-role.sh`) and persistent volume storage.
+  - Organized React 19 + TypeScript 7 + Vite 8 frontend shell (`components/`, `features/age-selector`, `features/curriculum`, `features/activities`, `features/progress`, `features/world`, `styles/`) with Arabic-first (`ar` / `rtl`) localization (`i18next`), spoken Arabic audio (`AudioPromptButton`), CSS logical layout, lazy-loaded React Three Fiber 3D `.glb` scenes (`garden-colors.glb`, `friendly-farm.glb`, `counting-blocks.glb`, `arabic-letters-stage.glb`), multi-modal activities (`scene_3d_explore`, `audio_listen_pick`, `visual_match_sort`, `counting_interactive`, `letter_forms_vowels`, `syllable_word_builder`), and parent progress tracking (`ParentProgressPanel`).
+  - ASP.NET Core 10 Minimal API (`Nawwar.Api`) with Arabic-first request localization (`ar`, `fr`, `en`), `/health/live`, `/health/ready`, `/api/v1/system/info`, and the 7-level preschool curriculum API (`/api/v1/curriculum/age-groups`, `/api/v1/curriculum/age-groups/{ageYears}`, `/api/v1/curriculum/lessons/{slug}`, `/api/v1/curriculum/progress`, `POST /api/v1/curriculum/activities/{activitySlug}/complete`).
+  - PostgreSQL 18 database with automatic least-privilege application role provisioning (`infra/postgres/init/10-create-app-role.sh`), persistent volume storage, and full preschool curriculum seeding for Ages 3, 4, and 5 (including all 6 courses of the Age 5 Arabic reading pathway `مَسَارُ تَعَلُّمِ القِرَاءَةِ`).
 
 Never describe planned features as already implemented.
 
@@ -86,10 +86,11 @@ Never describe planned features as already implemented.
 │   ├── Dockerfile                   # Multi-stage: deps -> dev -> source -> test -> build -> runtime
 │   ├── nginx/default.conf           # SPA routing, gzip, security headers, /api reverse proxy
 │   └── src/
-│       ├── components/              # Shared UI components (LanguageSwitcher, ErrorBoundary)
-│       ├── features/                # Feature slices (system/ApiStatus, world/WorldCanvas & WorldScene)
+│       ├── components/              # Shared UI components (LanguageSwitcher, AudioPromptButton, ErrorBoundary, layout/)
+│       ├── features/                # Feature slices (age-selector, curriculum, activities, progress, system, world)
 │       ├── i18n/                    # Arabic-first i18next config, resources, and tests
-│       └── lib/                     # Typed HTTP client (api.ts)
+│       ├── lib/                     # Typed HTTP client (api.ts)
+│       └── styles/                  # Modular CSS logical-property stylesheets (tokens, layout, age-worlds, activities)
 ├── backend/                         # .NET 10 solution (Nawwar.slnx)
 │   ├── Dockerfile                   # Multi-stage: sdk -> dev -> restore -> build -> test -> publish -> runtime
 │   ├── Directory.Build.props        # Shared compiler settings (TreatWarningsAsErrors, Nullable, ICU)

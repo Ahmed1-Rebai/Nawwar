@@ -1,0 +1,215 @@
+.age-selector {
+  margin-block-end: var(--space-6);
+}
+
+.age-selector__intro {
+  margin-block-end: var(--space-6);
+}
+
+.age-world-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: var(--space-6);
+}
+
+.age-world-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-6);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  text-align: start;
+}
+
+.age-world-card--discovery {
+  border-block-start: 6px solid var(--color-world-discovery);
+}
+
+.age-world-card--exploration {
+  border-block-start: 6px solid var(--color-world-exploration);
+}
+
+.age-world-card--learning {
+  border-block-start: 6px solid var(--color-world-learning);
+}
+
+.age-world-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: var(--space-3);
+}
+
+.age-world-card__emoji {
+  font-size: 2.5rem;
+}
+
+.age-world-card__age-badge {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 2.6rem;
+  block-size: 2.6rem;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  border: 2px solid var(--color-accent);
+  color: var(--color-accent);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.age-world-card__title {
+  font-size: 1.35rem;
+  color: var(--color-text);
+}
+
+.age-world-card__subtitle {
+  font-weight: 600;
+  color: var(--color-accent) !important;
+}
+
+.age-world-card__description {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+
+.age-world-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block: var(--space-3) var(--space-4);
+}
+
+.stat-chip {
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.age-world-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.age-world-card__cta {
+  inline-size: 100%;
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: #1a1206;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.world-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  margin-block-end: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.world-banner--discovery {
+  border-inline-start: 6px solid var(--color-world-discovery);
+}
+
+.world-banner--exploration {
+  border-inline-start: 6px solid var(--color-world-exploration);
+}
+
+.world-banner--learning {
+  border-inline-start: 6px solid var(--color-world-learning);
+}
+
+.world-banner__title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block-end: var(--space-2);
+}
+
+.world-banner__emoji {
+  font-size: 2rem;
+}
+
+.world-banner__subtitle {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.world-banner__description {
+  margin-block-end: 0;
+  color: var(--color-text-muted);
+}
+
+.world-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.domain-section {
+  margin-block-end: var(--space-6);
+}
+
+.section-subtitle {
+  font-size: 1.15rem;
+  margin-block-end: var(--space-3);
+}
+
+.domain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.domain-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-align: start;
+  cursor: pointer;
+}
+
+.domain-card[aria-selected='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-surface-raised);
+}
+
+.domain-card__emoji {
+  font-size: 1.8rem;
+}
+
+.domain-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.domain-card__title {
+  font-size: 1.05rem;
+}
+
+.domain-card__summary {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+}

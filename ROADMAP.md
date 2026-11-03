@@ -12,12 +12,12 @@ This document defines the mandatory, sequential execution roadmap (`PHASE A` thr
 flowchart TD
     PA["PHASE A: Product Realignment & Repository Audit (Completed)"]
     PB["PHASE B: Complete Age-Based Curriculum Design — Ages 3, 4, 5 (Completed)"]
-    PC["PHASE C: Curriculum Data Model & Content Architecture (Next — Awaiting Review)"]
-    PD["PHASE D: Main Age-Selection Experience & Educational Navigation"]
-    PE["PHASE E: Implement Actual Courses & Age-Appropriate Activities"]
-    PF["PHASE F: Integrate Playful 3D Scenes into Educational Lessons"]
-    PG["PHASE G: Progress Tracking & Parent Experience"]
-    PH["PHASE H: Authentication & Learner Accounts"]
+    PC["PHASE C: Curriculum Data Model & Content Architecture (Completed)"]
+    PD["PHASE D: Main Age-Selection Experience & Educational Navigation (Completed)"]
+    PE["PHASE E: Implement Actual Courses & Age-Appropriate Activities (Completed)"]
+    PF["PHASE F: Integrate Playful 3D Scenes into Educational Lessons (Completed)"]
+    PG["PHASE G: Progress Tracking & Parent Experience (Completed)"]
+    PH["PHASE H: Authentication & Learner Accounts (Next Phase)"]
     PI["PHASE I: Final Localization, Optimization & Production Readiness"]
 
     PA --> PB --> PC --> PD --> PE --> PF --> PG --> PH --> PI
@@ -64,71 +64,70 @@ flowchart TD
 
 ## PHASE C — Curriculum Data Model & Content Architecture
 
-- **Status**: **Proposed — Ready for Implementation Upon Approval**
-- **Dependencies**: PHASE A, PHASE B
-- **Objectives**:
-  - Replace the flat prototype module/checkpoint schema with the decoupled 7-level preschool curriculum schema in PostgreSQL 18 (`NawwarDbContext`):
-    - `AgeGroups` (`age_groups`: 3, 4, 5 years)
-    - `LearningDomains` (`learning_domains`)
-    - `CourseCollections` (`course_collections`, e.g., `مَسَارُ تَعَلُّمِ القِرَاءَةِ`)
-    - `Courses` (`courses`)
-    - `Lessons` (`lessons` — decoupled from any single `.glb` file)
-    - `Activities` (`activities` — multi-modal activity definitions)
-    - `LearningObjectives` (`learning_objectives`)
-    - `EducationalAssets` & `AudioAssets` (`educational_assets`, `audio_assets`)
-    - `Translations` (`content_translations`)
-    - `ProgressDefinitions` & activity completion records
-  - Expose REST endpoints under `/api/v1/curriculum/age-groups`, `/api/v1/curriculum/age-groups/{age}/domains`, `/api/v1/curriculum/courses/{slug}`, and `/api/v1/curriculum/lessons/{slug}`.
+- **Status**: **Completed (2026-11-03)**
+- **Deliverables**:
+  - Implemented the decoupled 7-level preschool curriculum schema in PostgreSQL 18 (`NawwarDbContext` & `CurriculumConfigurations`):
+    - `AgeGroup` (`age_groups`: `3`, `4`, `5` years with `ck_age_groups_age_years`)
+    - `LearningDomain` (`learning_domains`)
+    - `CourseCollection` (`course_collections`, including `is_reading_pathway` for `مَسَارُ تَعَلُّمِ القِرَاءَةِ`)
+    - `Course` (`courses`)
+    - `LearningObjective` (`learning_objectives`)
+    - `Lesson` (`lessons` — decoupled from `.glb` files)
+    - `Activity` (`activities` — multi-modal activity definitions with `ck_activities_glb_model_url`)
+    - `ActivityCompletion` (`activity_completions`)
+  - Implemented REST endpoints under `/api/v1/curriculum/age-groups`, `/api/v1/curriculum/age-groups/{ageYears:int}`, `/api/v1/curriculum/lessons/{slug}`, `/api/v1/curriculum/progress`, and `POST /api/v1/curriculum/activities/{activitySlug}/complete`.
 
 ---
 
 ## PHASE D — Main Age-Selection Experience & Educational Navigation
 
-- **Status**: Planned (After PHASE C)
-- **Dependencies**: PHASE C
-- **Objectives**:
-  - Redesign the main entry screen around the three preschool age-group portals:
+- **Status**: **Completed (2026-11-03)**
+- **Deliverables**:
+  - Implemented [`AgeWorldSelector.tsx`](frontend/src/features/age-selector/AgeWorldSelector.tsx) around the three preschool age-group portals:
     - **عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ**
     - **عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ**
     - **عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ**
-  - Build child- and parent-friendly RTL/LTR navigation through **Learning Domains → Course Collections → Courses → Lessons → Activities**.
+  - Built child- and parent-friendly RTL/LTR navigation through **Learning Domains (`DomainGrid.tsx`) → Course Collections & Courses (`CoursePathwayView.tsx`) → Lessons & Activities (`LessonStageView.tsx`)** in [`CurriculumWorkspace.tsx`](frontend/src/features/curriculum/CurriculumWorkspace.tsx).
 
 ---
 
 ## PHASE E — Implement Actual Courses & Age-Appropriate Activities
 
-- **Status**: Planned (After PHASE D)
-- **Dependencies**: PHASE D
-- **Objectives**:
-  - Implement the multi-modal activity engine supporting audio listening/picking, visual matching/sorting, interactive counting (1–3, 1–10, 1–20 + simple addition), Arabic letter discovery, positional letter forms, short vowels (*الفتحة، الكسرة، الضمة*), syllable construction, word reading, and short vocalized sentence reading.
-  - Seed authentic, fully vowelized Arabic courses across Ages 3, 4, and 5 (including all 6 courses of `مَسَارُ تَعَلُّمِ القِرَاءَةِ`).
+- **Status**: **Completed (2026-11-03)**
+- **Deliverables**:
+  - Implemented the multi-modal activity engine (`ActivityRenderer.tsx`, `InteractiveChoiceActivity.tsx`, `Scene3DExploreActivity.tsx`, `AudioPromptButton.tsx`) supporting:
+    - `scene_3d_explore` (3D exploration + object tap)
+    - `audio_listen_pick` (spoken Arabic prompt + visual option cards)
+    - `visual_match_sort` (visual association, animal habitats, logical sequences)
+    - `counting_interactive` (counting 1–3, 1–10, and simple addition stories)
+    - `letter_forms_vowels` (Arabic positional letter forms `بـ / ـبـ / ـب` and short vowels *الفَتْحَةُ، الكَسْرَةُ، الضَّمَّةُ*)
+    - `syllable_word_builder` (syllable blending `كَـ + تَـ + بَ = كَتَبَ`, word reading, and short vocalized sentences)
+  - Seeded authentic, fully vowelized Arabic courses across Ages 3, 4, and 5 (including all 6 courses of `مَسَارُ تَعَلُّمِ القِرَاءَةِ`) in `CurriculumCatalog.cs`.
 
 ---
 
 ## PHASE F — Integrate Playful 3D Scenes into Educational Lessons
 
-- **Status**: Planned (After PHASE E)
-- **Dependencies**: PHASE E
-- **Objectives**:
-  - Create and integrate age-appropriate `.glb` 3D scenes (3D Color & Shape Garden, Friendly Farm Animals, 3D Counting Toys, 3D Arabic Letters & Syllables) into `scene_3d_explore` activities using `WorldCanvas` / `WorldScene`.
+- **Status**: **Completed (2026-11-03)**
+- **Deliverables**:
+  - Generated spec-compliant binary glTF 2.0 (`.glb`) preschool models (`garden-colors.glb`, `friendly-farm.glb`, `counting-blocks.glb`, `arabic-letters-stage.glb`) via `frontend/scripts/generate-glb-models.mjs` and integrated them into `scene_3d_explore` activities via `Scene3DExploreActivity.tsx`, `WorldCanvas.tsx`, and `WorldScene.tsx`.
 
 ---
 
 ## PHASE G — Progress Tracking & Parent Experience
 
-- **Status**: Planned (After PHASE F)
-- **Dependencies**: PHASE F
-- **Objectives**:
-  - Track completed activities, lessons, courses, and mastered learning objectives per age group, with a clear parent overview screen.
+- **Status**: **Completed (2026-11-03)**
+- **Deliverables**:
+  - Implemented `ActivityCompletion` persistence in PostgreSQL 18 (`GET /api/v1/curriculum/progress`, `POST /api/v1/curriculum/activities/{activitySlug}/complete`) with per-age breakdowns (`byAge` for Ages 3, 4, and 5) and [`ParentProgressPanel.tsx`](frontend/src/features/progress/ParentProgressPanel.tsx).
 
 ---
 
 ## PHASE H — Authentication & Learner Accounts
 
-- **Status**: Planned (Deferred until PHASE G is complete)
+- **Status**: Planned (Next Phase)
 - **Dependencies**: PHASE G
 - **Objectives**:
-  - Add parent accounts and multiple child learner profiles (with age selection) that attach seamlessly to the `PHASE G` progress system.
+  - Add parent accounts and multiple child learner profiles (with age selection) that attach seamlessly to the `PHASE G` progress system (`learnerKey`).
 
 ---
 
@@ -137,4 +136,4 @@ flowchart TD
 - **Status**: Planned (Final phase)
 - **Dependencies**: PHASE H
 - **Objectives**:
-  - Complete French (`fr`) and English (`en`) content/audio coverage per the localization strategy in `AGE_BASED_CURRICULUM.md`, Playwright E2E suite, performance tuning, and production security audit.
+  - Expand audio recordings, Playwright E2E suite, performance tuning, and production security audit.

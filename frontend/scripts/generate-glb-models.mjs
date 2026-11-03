@@ -278,10 +278,138 @@ const crystalGlb = buildGlb([
   },
 ]);
 
+// 4. Preschool 3D Color Garden (garden-colors.glb — Age 3)
+const gardenColorsGlb = buildGlb([
+  {
+    name: 'Red_Apple',
+    geometry: new SphereGeometry(0.45, 24, 18),
+    translation: [-1.1, 0.8, 0.2],
+    baseColor: [0.94, 0.27, 0.27, 1.0],
+    emissive: [0.45, 0.08, 0.08],
+    metallic: 0.1,
+    roughness: 0.35,
+  },
+  {
+    name: 'Yellow_Flower',
+    geometry: new TorusGeometry(0.42, 0.15, 16, 32),
+    translation: [0.0, 1.05, 0.0],
+    baseColor: [0.98, 0.8, 0.08, 1.0],
+    emissive: [0.5, 0.38, 0.02],
+    metallic: 0.1,
+    roughness: 0.3,
+  },
+  {
+    name: 'Blue_Ball',
+    geometry: new SphereGeometry(0.42, 24, 18),
+    translation: [1.1, 0.75, 0.2],
+    baseColor: [0.23, 0.51, 0.96, 1.0],
+    emissive: [0.06, 0.2, 0.48],
+    metallic: 0.15,
+    roughness: 0.3,
+  },
+]);
+
+// 5. Preschool 3D Friendly Farm (friendly-farm.glb — Age 3)
+const friendlyFarmGlb = buildGlb([
+  {
+    name: 'Friendly_Sheep',
+    geometry: new IcosahedronGeometry(0.48, 1),
+    translation: [-1.0, 0.8, 0.2],
+    baseColor: [0.97, 0.98, 0.99, 1.0],
+    emissive: [0.22, 0.24, 0.28],
+    metallic: 0.05,
+    roughness: 0.7,
+  },
+  {
+    name: 'Friendly_Cow',
+    geometry: new BoxGeometry(0.75, 0.6, 0.55),
+    translation: [0.05, 0.85, 0.0],
+    baseColor: [0.85, 0.52, 0.18, 1.0],
+    emissive: [0.32, 0.16, 0.04],
+    metallic: 0.1,
+    roughness: 0.5,
+  },
+  {
+    name: 'Little_Duck',
+    geometry: new SphereGeometry(0.36, 20, 16),
+    translation: [1.05, 0.65, 0.25],
+    baseColor: [0.98, 0.82, 0.12, 1.0],
+    emissive: [0.45, 0.35, 0.04],
+    metallic: 0.1,
+    roughness: 0.35,
+  },
+]);
+
+// 6. Preschool 3D Counting Blocks 1-2-3 (counting-blocks.glb — Age 3 & 4)
+const countingBlocksGlb = buildGlb([
+  {
+    name: 'Block_One',
+    geometry: new BoxGeometry(0.56, 0.56, 0.56),
+    translation: [-1.1, 0.7, 0.0],
+    baseColor: [0.94, 0.27, 0.27, 1.0],
+    emissive: [0.42, 0.08, 0.08],
+    metallic: 0.15,
+    roughness: 0.35,
+  },
+  {
+    name: 'Block_Two',
+    geometry: new BoxGeometry(0.62, 0.62, 0.62),
+    translation: [0.0, 0.78, 0.0],
+    baseColor: [0.98, 0.8, 0.08, 1.0],
+    emissive: [0.45, 0.35, 0.03],
+    metallic: 0.15,
+    roughness: 0.35,
+  },
+  {
+    name: 'Block_Three',
+    geometry: new BoxGeometry(0.68, 0.68, 0.68),
+    translation: [1.1, 0.86, 0.0],
+    baseColor: [0.23, 0.51, 0.96, 1.0],
+    emissive: [0.06, 0.2, 0.48],
+    metallic: 0.15,
+    roughness: 0.35,
+  },
+]);
+
+// 7. Preschool 3D Arabic Letters & Short Vowels Stage (arabic-letters-stage.glb — Age 4 & 5)
+const arabicLettersStageGlb = buildGlb([
+  {
+    name: 'Letter_Pillar',
+    geometry: new CylinderGeometry(0.26, 0.32, 1.15, 24),
+    translation: [0.0, 0.95, 0.0],
+    baseColor: [0.96, 0.78, 0.42, 1.0],
+    emissive: [0.48, 0.34, 0.1],
+    metallic: 0.25,
+    roughness: 0.3,
+  },
+  {
+    name: 'Vowel_Fatha',
+    geometry: new BoxGeometry(0.62, 0.14, 0.18),
+    translation: [0.0, 1.72, 0.0],
+    baseColor: [0.22, 0.74, 0.97, 1.0],
+    emissive: [0.08, 0.35, 0.52],
+    metallic: 0.2,
+    roughness: 0.25,
+  },
+  {
+    name: 'Word_Model',
+    geometry: new SphereGeometry(0.38, 24, 18),
+    translation: [1.05, 0.8, 0.2],
+    baseColor: [0.94, 0.27, 0.27, 1.0],
+    emissive: [0.42, 0.08, 0.08],
+    metallic: 0.15,
+    roughness: 0.35,
+  },
+]);
+
 const outputs = [
   ['lantern.glb', lanternGlb],
   ['solar-system.glb', solarGlb],
   ['crystal-lattice.glb', crystalGlb],
+  ['garden-colors.glb', gardenColorsGlb],
+  ['friendly-farm.glb', friendlyFarmGlb],
+  ['counting-blocks.glb', countingBlocksGlb],
+  ['arabic-letters-stage.glb', arabicLettersStageGlb],
 ];
 
 for (const [filename, buffer] of outputs) {

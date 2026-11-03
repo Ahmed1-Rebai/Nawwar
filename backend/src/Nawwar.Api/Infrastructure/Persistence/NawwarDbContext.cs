@@ -4,18 +4,28 @@ using Nawwar.Api.Features.Curriculum.Domain;
 namespace Nawwar.Api.Infrastructure.Persistence;
 
 /// <summary>
-/// Primary EF Core context for PostgreSQL. Entity configurations are discovered
-/// automatically from <see cref="IEntityTypeConfiguration{TEntity}"/> implementations in this assembly.
+/// Primary EF Core context for PostgreSQL 18 backing the 7-level preschool curriculum
+/// (<see cref="AgeGroup"/> → <see cref="LearningDomain"/> → <see cref="CourseCollection"/> →
+/// <see cref="Course"/> → <see cref="Lesson"/> → <see cref="Activity"/> → <see cref="LearningObjective"/>)
+/// and learner activity progress (<see cref="ActivityCompletion"/>).
 /// </summary>
 public sealed class NawwarDbContext(DbContextOptions<NawwarDbContext> options) : DbContext(options)
 {
-    public DbSet<LearningModule> LearningModules => Set<LearningModule>();
+    public DbSet<AgeGroup> AgeGroups => Set<AgeGroup>();
+
+    public DbSet<LearningDomain> LearningDomains => Set<LearningDomain>();
+
+    public DbSet<CourseCollection> CourseCollections => Set<CourseCollection>();
+
+    public DbSet<Course> Courses => Set<Course>();
+
+    public DbSet<LearningObjective> LearningObjectives => Set<LearningObjective>();
 
     public DbSet<Lesson> Lessons => Set<Lesson>();
 
-    public DbSet<LessonCheckpoint> LessonCheckpoints => Set<LessonCheckpoint>();
+    public DbSet<Activity> Activities => Set<Activity>();
 
-    public DbSet<CheckpointCompletion> CheckpointCompletions => Set<CheckpointCompletion>();
+    public DbSet<ActivityCompletion> ActivityCompletions => Set<ActivityCompletion>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

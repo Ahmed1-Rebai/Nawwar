@@ -201,3 +201,4 @@ In NAWWAR, 3D scenes use soft rounded geometry, warm pastel-and-sunlight palette
 2. **Universal Domains vs. Language-Specific Literacy Domains**:
    - **Universal Cognitive Domains** (Colors, Shapes, Counting & Math, Animals, Nature & Seasons, Logic & Problem Solving): Lesson prompts and audio narration translate directly across `ar`, `fr`, and `en`.
    - **Arabic Reading & Alphabet Pathway (`مَسَارُ تَعَلُّمِ القِرَاءَةِ`)**: The target letters, short vowels (*الفَتْحَةُ، الكَسْرَةُ، الضَّمَّةُ*), syllables, and Arabic words remain in Arabic across all UI locales, while parent helper notes and instructions can be displayed in `ar`, `fr`, or `en` so non-Arabic-fluent parents can still support their child's Arabic reading journey.
+

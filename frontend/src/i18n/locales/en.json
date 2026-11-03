@@ -2,29 +2,63 @@
   "app": {
     "name": "Nawwar",
     "latinName": "NAWWAR",
-    "tagline": "An interactive 3D learning platform",
+    "tagline": "Interactive 3D educational universe for children aged 3, 4, and 5",
     "motto": "Knowledge is light"
   },
   "language": {
     "label": "Language"
   },
-  "world": {
-    "title": "3D scene preview",
-    "description": "Interactive GLB 3D lesson scene. Drag to orbit the camera or select an inspection checkpoint.",
-    "canvasLabel": "3D scene displaying the educational GLB model",
-    "loading": "Loading 3D GLB model…",
-    "unavailable": "3D rendering could not start on this device (WebGL unavailable).",
-    "assetBadge": "3D Model (.glb)"
+  "nav": {
+    "chooseAge": "Choose Age World",
+    "allAges": "Age Worlds Portal",
+    "parentProgress": "Parent Progress",
+    "agePill3": "Age 3",
+    "agePill4": "Age 4",
+    "agePill5": "Age 5"
+  },
+  "ageSelector": {
+    "heading": "Welcome to Nawwar’s Educational Worlds",
+    "subheading": "Select your child’s age group to enter age-appropriate courses, interactive activities, and playful 3D scenes:",
+    "enterWorld": "Enter World",
+    "domainsBadge": "learning domains",
+    "coursesBadge": "courses",
+    "activitiesBadge": "interactive activities"
   },
   "curriculum": {
-    "title": "Interactive learning modules",
-    "loading": "Loading curriculum…",
-    "unavailable": "Could not load learning modules from the server.",
-    "checkpointsTitle": "3D scene inspection checkpoints",
-    "targetNode": "Target 3D node",
-    "progressLabel": "Learning progress",
-    "markComplete": "Mark checkpoint complete",
-    "completed": "Completed"
+    "title": "Learning Domains & Pathways",
+    "loading": "Loading educational world…",
+    "unavailable": "Could not load the educational curriculum from the server.",
+    "domainsHeading": "Learning Domains",
+    "readingPathwayBadge": "Structured Reading Learning Pathway",
+    "objectivesLabel": "Learning Objectives",
+    "lessonsLabel": "Lessons & Activities",
+    "startLesson": "Start Lesson",
+    "activeLesson": "Active Lesson",
+    "minutesUnit": "min",
+    "scene3DBadge": "Interactive 3D Scene",
+    "activitiesHeading": "Interactive Lesson Activities",
+    "listenPrompt": "Listen to Pronunciation",
+    "playingAudio": "Playing audio…",
+    "markComplete": "Complete Activity ⭐",
+    "completed": "Completed ⭐",
+    "correctFeedback": "Wonderful job! That is correct 🌟",
+    "tryAgainFeedback": "Try again! Listen carefully to the prompt 🎵",
+    "syllableBlendLabel": "Blend the syllables:",
+    "sceneTapHint": "Tap the objects inside the 3D scene or the cards below:",
+    "progressLabel": "Completed Activities"
+  },
+  "progress": {
+    "title": "Learning Progress Overview (Parents & Educators)",
+    "totalCompleted": "Total Completed Activities",
+    "close": "Close"
+  },
+  "world": {
+    "title": "Interactive 3D Scene",
+    "description": "Playful 3D scene supporting the lesson’s learning objective.",
+    "canvasLabel": " Educational 3D scene for preschool children",
+    "loading": "Loading 3D scene…",
+    "unavailable": "3D rendering could not start on this device (WebGL unavailable).",
+    "assetBadge": "3D Scene (.glb)"
   },
   "status": {
     "title": "Server status",
@@ -35,6 +69,6 @@
     "serverLanguage": "Response language"
   },
   "footer": {
-    "phase": "Phase 2: interactive curriculum and GLB 3D models"
+    "phase": "Nawwar — Preschool Educational Curriculum (Ages 3, 4, and 5)"
   }
 }

@@ -45,8 +45,14 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 - **Entry & bootstrapping** ([`src/main.tsx`](frontend/src/main.tsx)):
   - Loads self-hosted `@fontsource-variable/noto-sans-arabic` WOFF2 font subsets.
   - Initializes `src/i18n` before first render so `<html lang="..." dir="...">` matches the active language immediately.
-- **Application shell** ([`src/App.tsx`](frontend/src/App.tsx)):
-  - Renders the localized header (`LanguageSwitcher`), hero section, 3D scene card (`WorldCanvas` inside `ErrorBoundary` + `Suspense`), and backend status card (`ApiStatus`).
+- **Organized UI Structure**:
+  - [`src/components/layout/AppHeader.tsx`](frontend/src/components/layout/AppHeader.tsx) & [`AppFooter.tsx`](frontend/src/components/layout/AppFooter.tsx): Brand header, age-world return button, parent progress drawer toggle, and language switcher.
+  - [`src/components/AudioPromptButton.tsx`](frontend/src/components/AudioPromptButton.tsx): Child-friendly Arabic speech synthesis (`window.speechSynthesis`, `ar-SA`) for vocalized prompts.
+  - [`src/features/age-selector/AgeWorldSelector.tsx`](frontend/src/features/age-selector/AgeWorldSelector.tsx): Primary landing screen presenting the three preschool age worlds (**3 سنوات**، **4 سنوات**، **5 سنوات**).
+  - [`src/features/curriculum/`](frontend/src/features/curriculum/CurriculumWorkspace.tsx): `CurriculumWorkspace.tsx`, `DomainGrid.tsx`, `CoursePathwayView.tsx` (highlighting `مَسَارُ تَعَلُّمِ القِرَاءَةِ`), and `LessonStageView.tsx`.
+  - [`src/features/activities/`](frontend/src/features/activities/ActivityRenderer.tsx): `ActivityRenderer.tsx`, `Scene3DExploreActivity.tsx`, `InteractiveChoiceActivity.tsx`, and `types.ts`.
+  - [`src/features/progress/ParentProgressPanel.tsx`](frontend/src/features/progress/ParentProgressPanel.tsx): Parent progress overview across Ages 3, 4, and 5.
+  - [`src/styles/`](frontend/src/styles/tokens.css): Modular stylesheets (`tokens.css`, `layout.css`, `age-worlds.css`, `activities.css`) using CSS logical properties exclusively.
 - **API client** ([`src/lib/api.ts`](frontend/src/lib/api.ts)):
   - Issues same-origin requests to `/api/v1/...` with an `Accept-Language` header matching `i18n.language`.
 
@@ -54,10 +60,10 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 
 ## 4. 3D Rendering Architecture (`frontend/src/features/world/`)
 
-- **Code splitting**: [`WorldCanvas.tsx`](frontend/src/features/world/WorldCanvas.tsx) is loaded via `React.lazy` in `App.tsx`, keeping the `three` + `@react-three/fiber` + `@react-three/drei` bundle out of the initial critical path.
-- **Binary `.glb` Pipeline** ([`WorldScene.tsx`](frontend/src/features/world/WorldScene.tsx)):
-  - Enforces `.glb` format (`isValidGlbUrl(modelUrl)`) and loads binary glTF 2.0 models (`/models/lantern.glb`, `/models/solar-system.glb`, `/models/crystal-lattice.glb`) via `useGLTF` from `@react-three/drei`.
-  - Clones the loaded scene graph so material highlight state stays isolated per instance, highlights the mesh matching the active checkpoint's `TargetNodeName`, supports direct 3D mesh picking (`onClick` → `onSelectNode`), disposes cloned materials on unmount, and renders a focus ring at the checkpoint's 3D `FocusPoint`.
+- **Code splitting**: [`WorldCanvas.tsx`](frontend/src/features/world/WorldCanvas.tsx) is loaded via `React.lazy` in `Scene3DExploreActivity.tsx`, keeping the `three` + `@react-three/fiber` + `@react-three/drei` bundle out of the initial critical path.
+- **Playful Preschool Binary `.glb` Pipeline** ([`WorldScene.tsx`](frontend/src/features/world/WorldScene.tsx)):
+  - Enforces `.glb` format (`isValidGlbUrl(modelUrl)`) and loads binary glTF 2.0 preschool models (`/models/garden-colors.glb`, `/models/friendly-farm.glb`, `/models/counting-blocks.glb`, `/models/arabic-letters-stage.glb`) via `useGLTF` from `@react-three/drei`.
+  - Clones the loaded scene graph so material highlight state stays isolated per instance, highlights the mesh matching the active activity's `TargetNodeName`, supports direct 3D mesh picking (`onClick` → `onSelectNode`), disposes cloned materials on unmount, and renders a focus ring at the activity's 3D `FocusPoint`.
   - Checks `window.matchMedia('(prefers-reduced-motion: reduce)')` and pauses frame rotation when reduced motion is requested.
 - **Fault isolation**: [`ErrorBoundary.tsx`](frontend/src/components/ErrorBoundary.tsx) catches WebGL or asset errors and displays a localized fallback notice.
 
@@ -65,38 +71,36 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 
 ## 5. Educational Content Architecture (`Features/Curriculum` & `features/curriculum`)
 
-### 5.1 Current Codebase State (Pre-Phase C Audit)
-- The repository currently runs an initial prototype slice (`LearningModule` → `Lesson` → `LessonCheckpoint` + `CheckpointCompletion`) under `backend/src/Nawwar.Api/Features/Curriculum/` and `frontend/src/features/curriculum/CurriculumExplorer.tsx`.
-- **Identified Divergence (Resolved by `ADR-0009`)**:
-  1. The prototype seeded secondary-school scientific topics (optics, astronomy, crystal lattices) instead of the preschool (ages 3, 4, 5) curriculum.
-  2. Every `Lesson` row was tightly coupled to a single `.glb` file (`model_url`) and 3D node checkpoints, whereas preschool lessons require multi-modal activities (3D exploration, audio listening, visual matching/sorting, counting, letter forms, short vowels *الفتحة/الكسرة/الضمة*, and syllable/word/sentence reading).
+### 5.1 Implemented 7-Level Preschool Curriculum (`PHASE C` – `PHASE G`)
 
-### 5.2 Target Realigned Curriculum & Activity Architecture (`PHASE C` – `PHASE G`)
-
-Per [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md) and `ADR-0009`, educational content is separated from presentation and 3D scene implementation across a 7-level hierarchy:
+Per [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md) and `ADR-0009`, educational content is separated from presentation and 3D scene implementation across a 7-level hierarchy in PostgreSQL 18:
 
 ```mermaid
 erDiagram
     AGE_GROUPS ||--o{ LEARNING_DOMAINS : organizes
     LEARNING_DOMAINS ||--o{ COURSE_COLLECTIONS : groups
     COURSE_COLLECTIONS ||--o{ COURSES : contains
+    COURSES ||--o{ LEARNING_OBJECTIVES : defines
     COURSES ||--o{ LESSONS : sequences
     LESSONS ||--o{ ACTIVITIES : delivers
-    ACTIVITIES }o--o{ LEARNING_OBJECTIVES : achieves
-    ACTIVITIES }o--o{ EDUCATIONAL_ASSETS : references_visual_or_3d
-    ACTIVITIES }o--o{ AUDIO_ASSETS : plays_narration
+    ACTIVITY_COMPLETIONS }o--|| ACTIVITIES : tracks_slug
 ```
 
-- **Core Curriculum Entities (`PHASE C`)**:
+- **Core Curriculum Entities (`backend/src/Nawwar.Api/Features/Curriculum/Domain/`)**:
   - `AgeGroup`: `3` (*عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ*), `4` (*عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ*), `5` (*عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ*).
-  - `LearningDomain`: Domain within an age group (e.g., *اللُّغَةُ العَرَبِيَّةُ*، *الأَلْوَانُ وَالأَشْكَالُ*، *الأَعْدَادُ وَالحِسَابُ*، *الحَيَوَانَاتُ وَالطَّبِيعَةُ*، *المَنْطِقُ*).
-  - `CourseCollection`: Ordered pathway within a domain (e.g., **`مَسَارُ تَعَلُّمِ القِرَاءَةِ`** for Age 5 Arabic reading).
-  - `Course`: Structured course with `TitleAr`, `DescriptionAr`, `TargetAge`, `DisplayOrder`, `DifficultyLevel`, `CompletionCriteria`, and linked `LearningObjectives`.
+  - `LearningDomain`: Domain within an age group (e.g., *الأَلْوَانُ وَالأَشْكَالُ*، *الأَصْوَاتُ وَالحَيَوَانَاتُ*، *الحُرُوفُ الهِجَائِيَّةُ*، *الأَعْدَادُ وَالحِسَابُ*، *اللُّغَةُ العَرَبِيَّةُ وَالقِرَاءَةُ*).
+  - `CourseCollection`: Ordered pathway within a domain, including the dedicated Age 5 Arabic reading pathway (**`مَسَارُ تَعَلُّمِ القِرَاءَةِ`**, `IsReadingPathway = true`) with 6 sequential courses:
+    1. `اِكْتِشَافُ الحُرُوفِ`
+    2. `أَشْكَالُ الحُرُوفِ`
+    3. `الحَرَكَاتُ القَصِيرَةُ` (*الفَتْحَةُ، الكَسْرَةُ، الضَّمَّةُ*)
+    4. `بِنَاءُ المَقَاطِعِ`
+    5. `قِرَاءَةُ الكَلِمَاتِ`
+    6. `قِرَاءَةُ الجُمَلِ البَسِيطَةِ`
+  - `Course`: Structured course with localized `TitleAr`/`Fr`/`En`, `SummaryAr`/`Fr`/`En`, `IconEmoji`, and linked `LearningObjectives` + `Lessons`.
+  - `LearningObjective`: Measurable early-childhood learning outcome with unique code (`AGE3-CLR-1`, `AGE5-RD-4`, etc.).
   - `Lesson`: Pedagogical lesson unit within a course (decoupled from any single `.glb` file).
-  - `Activity`: Multi-modal interactive step (`scene_3d_explore`, `audio_listen_pick`, `visual_match_sort`, `counting_interactive`, `letter_forms_vowels`, `syllable_word_builder`) with a JSON configuration payload and references to `EducationalAssets` (`.glb` scenes, 2D illustrations, animations) and `AudioAssets`.
-  - `LearningObjective`: Measurable early-childhood learning outcome.
-  - `ContentTranslation`: Localization table (`ar` primary, `fr`, `en`) for translatable text and audio references.
-  - `ProgressDefinition` & `ActivityCompletion`: Tracks completion across activities, lessons, and courses without requiring authentication in early phases (`PHASE G`), ready to bind to learner profiles in `PHASE H`.
+  - `Activity`: Multi-modal interactive step (`scene_3d_explore`, `audio_listen_pick`, `visual_match_sort`, `counting_interactive`, `letter_forms_vowels`, `syllable_word_builder`) with optional `.glb` scene asset (`GlbModelUrl`) and JSON interaction payload (`InteractionPayloadJson`).
+  - `ActivityCompletion`: Tracks completion across activities and age worlds (`AgeYears`) without requiring authentication (`PHASE G`), ready to bind to learner profiles in `PHASE H`.
 
 ---
 
@@ -130,7 +134,7 @@ erDiagram
 - **Engine**: PostgreSQL 18 (`postgres:18-alpine`) with persistent data stored in the `postgres_data` volume at `/var/lib/postgresql`.
 - **Context**: [`NawwarDbContext.cs`](backend/src/Nawwar.Api/Infrastructure/Persistence/NawwarDbContext.cs) registered with Npgsql (`EnableRetryOnFailure()`) in [`PersistenceSetup.cs`](backend/src/Nawwar.Api/Infrastructure/Persistence/PersistenceSetup.cs).
 - **Provisioning**: On first initialization of an empty volume, [`infra/postgres/init/10-create-app-role.sh`](infra/postgres/init/10-create-app-role.sh) creates the non-superuser role `NAWWAR_DB_USER` (`nawwar_app`), transfers ownership of database `POSTGRES_DB` (`nawwar`) to it, and revokes `PUBLIC` connect privileges.
-- **Schema & Seeding**: [`CurriculumInitializer.cs`](backend/src/Nawwar.Api/Infrastructure/Persistence/CurriculumInitializer.cs) ensures the `learning_modules`, `lessons`, and `lesson_checkpoints` tables exist on startup and seeds the initial 3 Arabic/French/English modules and `.glb` lessons (see [`docs/architecture/DATABASE_SCHEMA.md`](docs/architecture/DATABASE_SCHEMA.md)).
+- **Schema & Seeding**: [`CurriculumInitializer.cs`](backend/src/Nawwar.Api/Infrastructure/Persistence/CurriculumInitializer.cs) ensures the 7-level preschool curriculum tables (`age_groups`, `learning_domains`, `course_collections`, `courses`, `learning_objectives`, `lessons`, `activities`, and `activity_completions`) exist on startup and seeds Ages 3, 4, and 5 (see [`docs/architecture/DATABASE_SCHEMA.md`](docs/architecture/DATABASE_SCHEMA.md)).
 
 ---
 
@@ -141,10 +145,11 @@ erDiagram
 | `GET /health/live` | Process liveness probe (no DB check) | Public | `200 OK` (`Healthy`) |
 | `GET /health/ready` | Readiness probe (verifies PostgreSQL connectivity via `NawwarDbContext`) | Internal / Probe | `200 OK` (`Healthy`) or `503 Service Unavailable` |
 | `GET /api/v1/system/info` | Service metadata and resolved request culture/direction | Public | `200 OK` JSON (`SystemInfoResponse`) + `Content-Language` header |
-| `GET /api/v1/curriculum/modules` | Localized list of learning modules and `.glb` lesson summaries | Public | `200 OK` JSON (`CurriculumOverviewResponse`) |
-| `GET /api/v1/curriculum/lessons/{slug}` | Localized `.glb` lesson detail, camera config, and 3D scene checkpoints | Public | `200 OK` JSON (`LessonDetailResponse`) or `404` Problem Details |
-| `GET /api/v1/curriculum/progress` | Completed 3D scene checkpoints across all lessons for a learner | Public | `200 OK` JSON (`LearnerProgressResponse`) |
-| `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete` | Idempotently marks a 3D checkpoint as completed for a learner | Public | `200 OK` JSON (`LearnerProgressResponse`) or `400`/`404` Problem Details |
+| `GET /api/v1/curriculum/age-groups` | Localized summaries of the 3 preschool age worlds (`3`, `4`, `5` years) | Public | `200 OK` JSON (`AgeGroupsOverviewResponse`) |
+| `GET /api/v1/curriculum/age-groups/{ageYears:int}` | Full 7-level curriculum tree for age `3`, `4`, or `5` (domains, collections, `مَسَارُ تَعَلُّمِ القِرَاءَةِ`, courses, objectives, lessons, activities) | Public | `200 OK` JSON (`AgeGroupDetailResponse`) or `404` Problem Details |
+| `GET /api/v1/curriculum/lessons/{slug}` | Localized preschool lesson detail and ordered multi-modal activities | Public | `200 OK` JSON (`LessonDetailResponse`) or `404` Problem Details |
+| `GET /api/v1/curriculum/progress` | Completed activities across all 3 preschool age worlds for a learner | Public | `200 OK` JSON (`LearnerProgressResponse`) |
+| `POST /api/v1/curriculum/activities/{activitySlug}/complete` | Idempotently marks an activity as completed for a learner | Public | `200 OK` JSON (`LearnerProgressResponse`) or `404` Problem Details |
 | `GET /openapi/v1.json` | OpenAPI 3 document (`Development` environment only) | Dev only | `200 OK` JSON |
 
 ---

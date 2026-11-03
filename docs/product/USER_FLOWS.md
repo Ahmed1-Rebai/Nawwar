@@ -51,3 +51,4 @@ flowchart TD
      - **2D Interactive Stage** when the activity focuses on vocalized reading cards, syllable building, audio listening, or drag-and-drop matching.
 5. **Step 5 — Joyful Completion & Next Activity**:
    - Completing an activity awards a cheerful star/light badge, updates progress, and offers a single prominent button to continue to the next activity or lesson.
+

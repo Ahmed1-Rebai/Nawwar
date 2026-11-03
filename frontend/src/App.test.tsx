@@ -4,14 +4,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import i18n from './i18n';
 import App from './App';
 import {
-  type CurriculumOverview,
+  type AgeGroupDetail,
+  type AgeGroupsOverview,
   isValidGlbUrl,
   type LearnerProgress,
   type LessonDetail,
   type SystemInfo,
 } from './lib/api';
 
-// WebGL is unavailable in jsdom; expose modelUrl, activeNodeName, and a simulated 3D mesh click trigger.
 vi.mock('./features/world/WorldCanvas', () => ({
   default: ({
     label,
@@ -33,10 +33,10 @@ vi.mock('./features/world/WorldCanvas', () => ({
     >
       <button
         type="button"
-        data-testid="pick-aperture-node"
-        onClick={() => onSelectNode?.('Aperture_Ring')}
+        data-testid="pick-yellow-flower-node"
+        onClick={() => onSelectNode?.('Yellow_Flower')}
       >
-        Pick Aperture_Ring
+        Pick Yellow_Flower
       </button>
     </div>
   ),
@@ -51,132 +51,291 @@ const systemInfo = (culture: string): SystemInfo => ({
   supportedCultures: ['ar', 'fr', 'en'],
 });
 
-const curriculumOverview = (culture: string): CurriculumOverview => ({
+const ageGroupsOverview = (culture: string): AgeGroupsOverview => ({
   culture,
   direction: culture === 'ar' ? 'rtl' : 'ltr',
-  modules: [
+  ageGroups: [
     {
-      slug: 'optics-and-light',
-      order: 1,
-      title: culture === 'fr' ? 'Optique et physique de la lumière' : 'البَصَرِيَّاتُ وَفِيزْيَاءُ الضَّوْءِ',
-      summary: 'Summary',
-      lessons: [
-        {
-          slug: 'alhazen-optical-lantern',
-          order: 1,
-          title: culture === 'fr' ? 'La lanterne optique d’Ibn al-Haytham' : 'مِصْبَاحُ ابْنِ الهَيْثَمِ وَالحُجْرَةُ المُظْلِمَةُ',
-          objective: 'Objective',
-          modelUrl: '/models/lantern.glb',
-          modelFormat: 'model/gltf-binary',
-          checkpointCount: 2,
-        },
-      ],
+      ageYears: 3,
+      slug: 'age-3-discovery',
+      themeKey: 'discovery',
+      iconEmoji: '🌱',
+      title: culture === 'fr' ? 'Monde de la Découverte — 3 ans' : 'عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ',
+      subtitle: 'الاِكْتِشَافُ الحِسِّيُّ',
+      description: 'أَنْشِطَةٌ قَصِيرَةٌ وَمَرِحَةٌ',
+      domainCount: 3,
+      courseCount: 4,
+      activityCount: 5,
     },
     {
-      slug: 'planetary-astronomy',
-      order: 2,
-      title: culture === 'fr' ? 'Astronomie et mécanique céleste' : 'عِلْمُ الفَلَكِ وَحَرَكَةُ الكَوَاكِبِ',
-      summary: 'Astronomy summary',
-      lessons: [
-        {
-          slug: 'sun-earth-moon-system',
-          order: 1,
-          title: culture === 'fr' ? 'Le système Soleil-Terre-Lune' : 'مَنْظُومَةُ الشَّمْسِ وَالأَرْضِ وَالقَمَرِ',
-          objective: 'Orbit objective',
-          modelUrl: '/models/solar-system.glb',
-          modelFormat: 'model/gltf-binary',
-          checkpointCount: 2,
-        },
-      ],
+      ageYears: 4,
+      slug: 'age-4-exploration',
+      themeKey: 'exploration',
+      iconEmoji: '🧭',
+      title: culture === 'fr' ? 'Monde de l’Exploration — 4 ans' : 'عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ',
+      subtitle: 'اِكْتِشَافُ الحُرُوفِ وَالعَدُّ',
+      description: 'رِحْلَةٌ مُمْتِعَةٌ',
+      domainCount: 3,
+      courseCount: 4,
+      activityCount: 5,
+    },
+    {
+      ageYears: 5,
+      slug: 'age-5-learning',
+      themeKey: 'learning',
+      iconEmoji: '🌟',
+      title: culture === 'fr' ? 'Monde de l’Apprentissage — 5 ans' : 'عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ',
+      subtitle: 'مَسَارُ تَعَلُّمِ القِرَاءَةِ العَرَبِيَّةِ',
+      description: 'مَنْهَجٌ مُتَكَامِلٌ',
+      domainCount: 3,
+      courseCount: 8,
+      activityCount: 9,
     },
   ],
 });
 
-const lessonDetails = (slug: string, culture: string): LessonDetail => {
-  if (slug === 'sun-earth-moon-system') {
+const ageGroupDetail = (ageYears: number, culture: string): AgeGroupDetail => {
+  if (ageYears === 5) {
     return {
-      slug,
-      moduleSlug: 'planetary-astronomy',
+      ageYears: 5,
+      slug: 'age-5-learning',
+      themeKey: 'learning',
+      iconEmoji: '🌟',
       culture,
       direction: culture === 'ar' ? 'rtl' : 'ltr',
-      title: culture === 'fr' ? 'Le système Soleil-Terre-Lune' : 'مَنْظُومَةُ الشَّمْسِ وَالأَرْضِ وَالقَمَرِ',
-      objective: 'Orbit objective',
-      asset: {
-        url: '/models/solar-system.glb',
-        format: 'model/gltf-binary',
-        cameraPosition: [4.2, 3.0, 4.6],
-        cameraTarget: [0, 0.8, 0],
-      },
-      checkpoints: [
+      title: 'عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ',
+      subtitle: 'مَسَارُ تَعَلُّمِ القِرَاءَةِ العَرَبِيَّةِ',
+      description: 'مَنْهَجٌ مُتَكَامِلٌ',
+      domains: [
         {
-          stepOrder: 1,
-          targetNodeName: 'Core_Sun',
-          focusPoint: [0, 1, 0],
-          title: 'الشَّمْسُ',
-          explanation: 'الشمس مركز الجاذبية.',
-        },
-        {
-          stepOrder: 2,
-          targetNodeName: 'Planet_Earth',
-          focusPoint: [1.75, 1, 0],
-          title: 'كَوْكَبُ الأَرْضِ',
-          explanation: 'دوران الأرض حول نفسها.',
+          slug: 'age-5-arabic-language-and-reading',
+          order: 1,
+          iconEmoji: '📖',
+          accentColor: '#f4c76b',
+          title: 'اللُّغَةُ العَرَبِيَّةُ',
+          summary: 'مَسَارُ تَعَلُّمِ القِرَاءَةِ المُتَدَرِّجُ',
+          collections: [
+            {
+              slug: 'arabic-reading-pathway',
+              order: 1,
+              isReadingPathway: true,
+              title: 'مَسَارُ تَعَلُّمِ القِرَاءَةِ',
+              summary: 'سِتُّ دَوْرَاتٍ مُتَسَلْسِلَةٍ',
+              courses: [
+                {
+                  slug: 'syllable-construction',
+                  targetAge: 5,
+                  order: 4,
+                  difficultyLevel: 2,
+                  iconEmoji: '🧩',
+                  title: 'بِنَاءُ المَقَاطِعِ',
+                  description: 'نَجْمَعُ الحُرُوفَ المُتَحَرِّكَةَ',
+                  completionCriteria: 'دَمْجُ المَقَاطِعِ',
+                  objectives: [
+                    {
+                      code: 'L5-RD-04',
+                      order: 1,
+                      description: 'تَرْكِيبُ المَقَاطِعِ الصَّوْتِيَّةِ',
+                    },
+                  ],
+                  lessons: [
+                    {
+                      slug: 'blending-syllables-ka-ta-ba',
+                      order: 1,
+                      estimatedMinutes: 5,
+                      title: 'نَبْنِي المَقَاطِعَ: (كَـ + تَـ + بَ)',
+                      summary: 'اِدمِجِ المَقَاطِعَ الصَّوْتِيَّةَ',
+                      activityCount: 1,
+                      has3DScene: false,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
       ],
     };
   }
 
   return {
-    slug: 'alhazen-optical-lantern',
-    moduleSlug: 'optics-and-light',
+    ageYears: 3,
+    slug: 'age-3-discovery',
+    themeKey: 'discovery',
+    iconEmoji: '🌱',
     culture,
     direction: culture === 'ar' ? 'rtl' : 'ltr',
-    title: culture === 'fr' ? 'La lanterne optique d’Ibn al-Haytham' : 'مِصْبَاحُ ابْنِ الهَيْثَمِ وَالحُجْرَةُ المُظْلِمَةُ',
-    objective: 'Objective',
-    asset: {
-      url: '/models/lantern.glb',
-      format: 'model/gltf-binary',
-      cameraPosition: [3.2, 2.3, 4.0],
-      cameraTarget: [0, 1.0, 0],
-    },
-    checkpoints: [
+    title: 'عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ',
+    subtitle: 'الاِكْتِشَافُ الحِسِّيُّ',
+    description: 'أَنْشِطَةٌ قَصِيرَةٌ وَمَرِحَةٌ',
+    domains: [
       {
-        stepOrder: 1,
-        targetNodeName: 'Light_Core',
-        focusPoint: [0, 1.25, 0],
-        title: 'المَصْدَرُ الضَّوْئِيُّ المَرْكَزِيُّ',
-        explanation: 'ينبعث الضوء في خطوط مستقيمة.',
-      },
-      {
-        stepOrder: 2,
-        targetNodeName: 'Aperture_Ring',
-        focusPoint: [0, 1.25, 0.95],
-        title: 'حَلْقَةُ الثُّقْبِ الضَّيِّقِ',
-        explanation: 'يسمح الثقب الضيق بمرور حزمة محددة.',
+        slug: 'age-3-colors-and-shapes',
+        order: 1,
+        iconEmoji: '🎨',
+        accentColor: '#ff7a70',
+        title: 'الأَلْوَانُ وَالأَشْكَالُ الأَسَاسِيَّةُ',
+        summary: 'تَعَرَّفْ عَلَى الأَلْوَانِ',
+        collections: [
+          {
+            slug: 'garden-of-colors-and-shapes',
+            order: 1,
+            isReadingPathway: false,
+            title: 'سِلْسِلَةُ حَدِيقَةِ الأَلْوَانِ وَالأَشْكَالِ',
+            summary: 'رِحْلَةٌ بَصَرِيَّةٌ',
+            courses: [
+              {
+                slug: 'my-first-four-colors',
+                targetAge: 3,
+                order: 1,
+                difficultyLevel: 1,
+                iconEmoji: '🍎',
+                title: 'أَلْوَانِي الأَرْبَعَةُ الأُولَى',
+                description: 'نَكْتَشِفُ الأَلْوَانَ',
+                completionCriteria: 'إِتْمَامُ الأَنْشِطَةِ',
+                objectives: [
+                  {
+                    code: 'L3-CL-01',
+                    order: 1,
+                    description: 'التَّعَرُّفُ عَلَى الأَلْوَانِ الأَسَاسِيَّةِ',
+                  },
+                ],
+                lessons: [
+                  {
+                    slug: 'red-apple-yellow-sun-garden',
+                    order: 1,
+                    estimatedMinutes: 3,
+                    title: 'التُّفَّاحَةُ الحَمْرَاءُ وَالزَّهْرَةُ الصَّفْرَاءُ فِي الحَدِيقَةِ',
+                    summary: 'نَسْتَكْشِفُ الأَلْوَانَ فِي المَشْهَدِ ثُلَاثِيِّ الأَبْعَادِ',
+                    activityCount: 1,
+                    has3DScene: true,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   };
 };
 
-const learnerProgress = (completedSteps: number[]): LearnerProgress => ({
+const lessonDetails = (slug: string, culture: string): LessonDetail => {
+  if (slug === 'blending-syllables-ka-ta-ba') {
+    return {
+      slug,
+      courseSlug: 'syllable-construction',
+      courseTitle: 'بِنَاءُ المَقَاطِعِ',
+      ageYears: 5,
+      culture,
+      direction: culture === 'ar' ? 'rtl' : 'ltr',
+      title: 'نَبْنِي المَقَاطِعَ: (كَـ + تَـ + بَ)',
+      summary: 'اِدمِجِ المَقَاطِعَ الصَّوْتِيَّةَ',
+      estimatedMinutes: 5,
+      activities: [
+        {
+          slug: 'age5-rd4-build-kataba',
+          stepOrder: 1,
+          activityType: 'syllable_word_builder',
+          objectiveCode: 'L5-RD-04',
+          title: 'اِدمِجِ المَقَاطِعَ الثَّلَاثَةَ: كَـ + تَـ + بَ',
+          prompt: 'عِنْدَمَا نَجْمَعُ المَقَاطِعَ: (كَـ) + (تَـ) + (بَ)، مَا الكَلِمَةُ الَّتِي نَحْصُلُ عَلَيْهَا؟',
+          spokenText: 'كَـ .. تَـ .. بَ : كَتَبَ!',
+          glbModelUrl: null,
+          targetNodeName: null,
+          focusPoint: [0, 0, 0],
+          interactionPayloadJson: JSON.stringify({
+            syllables: ['كَـ', 'تَـ', 'بَ'],
+            correctOptionId: 'word-kataba',
+            options: [
+              {
+                id: 'word-kataba',
+                emoji: '✍️',
+                labelAr: 'كَتَبَ',
+                labelFr: 'كَتَبَ',
+                labelEn: 'كَتَبَ',
+                accentColor: '#4cc38a',
+              },
+              {
+                id: 'word-qaraa',
+                emoji: '📖',
+                labelAr: 'قَرَأَ',
+                labelFr: 'قَرَأَ',
+                labelEn: 'قَرَأَ',
+                accentColor: '#38bdf8',
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  }
+
+  return {
+    slug: 'red-apple-yellow-sun-garden',
+    courseSlug: 'my-first-four-colors',
+    courseTitle: 'أَلْوَانِي الأَرْبَعَةُ الأُولَى',
+    ageYears: 3,
+    culture,
+    direction: culture === 'ar' ? 'rtl' : 'ltr',
+    title: 'التُّفَّاحَةُ الحَمْرَاءُ وَالزَّهْرَةُ الصَّفْرَاءُ فِي الحَدِيقَةِ',
+    summary: 'نَسْتَكْشِفُ الأَلْوَانَ فِي المَشْهَدِ ثُلَاثِيِّ الأَبْعَادِ',
+    estimatedMinutes: 3,
+    activities: [
+      {
+        slug: 'age3-colors-3d-garden',
+        stepOrder: 1,
+        activityType: 'scene_3d_explore',
+        objectiveCode: 'L3-CL-01',
+        title: 'اِكْتَشِفْ حَدِيقَةَ الأَلْوَانِ ثُلَاثِيَّةَ الأَبْعَادِ',
+        prompt: 'اِضْغَطْ عَلَى التُّفَّاحَةِ الحَمْرَاءِ أَوِ الزَّهْرَةِ الصَّفْرَاءِ!',
+        spokenText: 'هَذِهِ حَدِيقَةُ الأَلْوَانِ!',
+        glbModelUrl: '/models/garden-colors.glb',
+        targetNodeName: 'Red_Apple',
+        focusPoint: [-1.1, 0.8, 0.2],
+        interactionPayloadJson: JSON.stringify({
+          sceneObjects: [
+            {
+              nodeName: 'Red_Apple',
+              emoji: '🍎',
+              labelAr: 'تُفَّاحَةٌ حَمْرَاءُ',
+              labelFr: 'Pomme rouge',
+              labelEn: 'Red apple',
+              color: '#ef4444',
+            },
+            {
+              nodeName: 'Yellow_Flower',
+              emoji: '🌻',
+              labelAr: 'زَهْرَةٌ صَفْرَاءُ',
+              labelFr: 'Fleur jaune',
+              labelEn: 'Yellow flower',
+              color: '#facc15',
+            },
+          ],
+        }),
+      },
+    ],
+  };
+};
+
+const learnerProgress = (completedSlugs: string[]): LearnerProgress => ({
   learnerKey: 'default',
-  totalCompletedSteps: completedSteps.length,
-  totalCheckpoints: 4,
-  lessons: [
+  totalCompletedActivities: completedSlugs.length,
+  totalActivities: 19,
+  completedActivitySlugs: completedSlugs,
+  byAge: [
+    { ageYears: 3, title: 'عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ', completedActivities: 0, totalActivities: 5 },
+    { ageYears: 4, title: 'عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ', completedActivities: 0, totalActivities: 5 },
     {
-      lessonSlug: 'alhazen-optical-lantern',
-      completedSteps,
-      totalCheckpoints: 2,
-    },
-    {
-      lessonSlug: 'sun-earth-moon-system',
-      completedSteps: [],
-      totalCheckpoints: 2,
+      ageYears: 5,
+      title: 'عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ',
+      completedActivities: completedSlugs.length,
+      totalActivities: 9,
     },
   ],
 });
 
-describe('App & GLB Curriculum', () => {
+describe('NAWWAR Preschool Age-Based Curriculum & Multi-Modal Activities', () => {
   beforeEach(async () => {
     await i18n.changeLanguage('ar');
     vi.stubGlobal(
@@ -187,17 +346,23 @@ describe('App & GLB Curriculum', () => {
         if (url.endsWith('/v1/system/info')) {
           return Promise.resolve(new Response(JSON.stringify(systemInfo(language)), { status: 200 }));
         }
-        if (url.endsWith('/v1/curriculum/modules')) {
-          return Promise.resolve(new Response(JSON.stringify(curriculumOverview(language)), { status: 200 }));
+        if (url.endsWith('/v1/curriculum/age-groups')) {
+          return Promise.resolve(new Response(JSON.stringify(ageGroupsOverview(language)), { status: 200 }));
+        }
+        if (url.includes('/v1/curriculum/age-groups/')) {
+          const age = Number(url.split('/').pop() ?? '3');
+          return Promise.resolve(new Response(JSON.stringify(ageGroupDetail(age, language)), { status: 200 }));
         }
         if (url.includes('/v1/curriculum/progress')) {
           return Promise.resolve(new Response(JSON.stringify(learnerProgress([])), { status: 200 }));
         }
         if (url.endsWith('/complete') && init?.method === 'POST') {
-          return Promise.resolve(new Response(JSON.stringify(learnerProgress([1])), { status: 200 }));
+          return Promise.resolve(
+            new Response(JSON.stringify(learnerProgress(['age5-rd4-build-kataba'])), { status: 200 }),
+          );
         }
         if (url.includes('/v1/curriculum/lessons/')) {
-          const slug = url.split('/').pop() ?? 'alhazen-optical-lantern';
+          const slug = url.split('/').pop() ?? 'red-apple-yellow-sun-garden';
           return Promise.resolve(new Response(JSON.stringify(lessonDetails(slug, language)), { status: 200 }));
         }
         return Promise.resolve(new Response('', { status: 404 }));
@@ -210,59 +375,61 @@ describe('App & GLB Curriculum', () => {
   });
 
   it('validates that 3D model URLs use the .glb extension', () => {
-    expect(isValidGlbUrl('/models/lantern.glb')).toBe(true);
-    expect(isValidGlbUrl('/models/SOLAR-SYSTEM.GLB')).toBe(true);
+    expect(isValidGlbUrl('/models/garden-colors.glb')).toBe(true);
+    expect(isValidGlbUrl('/models/FRIENDLY-FARM.GLB')).toBe(true);
     expect(isValidGlbUrl('/models/scene.gltf')).toBe(false);
     expect(isValidGlbUrl('/models/scene.obj')).toBe(false);
   });
 
-  it('renders the Arabic interface right-to-left and loads the default .glb lesson', async () => {
+  it('renders the main Age-World Selection portal in Arabic (RTL) with Ages 3, 4, and 5', async () => {
     render(<App />);
 
     expect(screen.getByRole('heading', { level: 1, name: 'نوّار' })).toBeInTheDocument();
     expect(document.documentElement.dir).toBe('rtl');
     expect(await screen.findByText('متّصل')).toBeInTheDocument();
-    expect(await screen.findByText('البَصَرِيَّاتُ وَفِيزْيَاءُ الضَّوْءِ')).toBeInTheDocument();
 
-    const canvas = await screen.findByTestId('world-canvas');
-    expect(canvas).toHaveAttribute('data-model-url', '/models/lantern.glb');
-    expect(canvas).toHaveAttribute('data-active-node', 'Light_Core');
+    expect(await screen.findByText('عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ')).toBeInTheDocument();
+    expect(screen.getByText('عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ')).toBeInTheDocument();
+    expect(screen.getByText('عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ')).toBeInTheDocument();
   });
 
-  it('switches between .glb lessons and updates the target 3D checkpoint node', async () => {
+  it('enters Age 3 (عالم الاكتشاف) and interacts with the playful 3D color garden (.glb)', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    const astronomyLessonButton = await screen.findByRole('button', {
-      name: /مَنْظُومَةُ الشَّمْسِ وَالأَرْضِ وَالقَمَرِ/,
+    const enterAge3Button = await screen.findByRole('button', {
+      name: /اُدْخُلِ العَالَمَ: عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ/,
     });
-    await user.click(astronomyLessonButton);
+    await user.click(enterAge3Button);
 
+    expect(
+      await screen.findByRole('heading', { level: 4, name: 'أَلْوَانِي الأَرْبَعَةُ الأُولَى' }),
+    ).toBeInTheDocument();
     const canvas = await screen.findByTestId('world-canvas');
-    expect(canvas).toHaveAttribute('data-model-url', '/models/solar-system.glb');
-    expect(canvas).toHaveAttribute('data-active-node', 'Core_Sun');
+    expect(canvas).toHaveAttribute('data-model-url', '/models/garden-colors.glb');
+    expect(canvas).toHaveAttribute('data-active-node', 'Red_Apple');
 
-    const secondCheckpointTab = await screen.findByRole('tab', { name: /كَوْكَبُ الأَرْضِ/ });
-    await user.click(secondCheckpointTab);
-    expect(canvas).toHaveAttribute('data-active-node', 'Planet_Earth');
+    await user.click(screen.getByTestId('pick-yellow-flower-node'));
+    expect(canvas).toHaveAttribute('data-active-node', 'Yellow_Flower');
   });
 
-  it('selects the matching checkpoint when a 3D mesh node is clicked inside the .glb scene and records completion', async () => {
+  it('enters Age 5 (عالم التعلم), displays مسار تعلم القراءة, and completes syllable blending', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    const completeButton = await screen.findByRole('button', { name: 'إتمام نقطة الفحص' });
-    const canvas = await screen.findByTestId('world-canvas');
-    expect(canvas).toHaveAttribute('data-active-node', 'Light_Core');
+    const enterAge5Button = await screen.findByRole('button', {
+      name: /اُدْخُلِ العَالَمَ: عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ/,
+    });
+    await user.click(enterAge5Button);
 
-    await user.click(completeButton);
+    expect(await screen.findByText('مَسَارُ تَعَلُّمِ القِرَاءَةِ')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 4, name: 'بِنَاءُ المَقَاطِعِ' })).toBeInTheDocument();
 
-    expect(await screen.findByRole('button', { name: 'مُكْتَمِل' })).toBeDisabled();
-    expect(screen.getByTestId('progress-summary')).toHaveTextContent('1/4');
+    const katabaOption = await screen.findByRole('button', { name: /كَتَبَ/ });
+    await user.click(katabaOption);
 
-    // Clicking the 3D mesh node directly inside the GLB canvas switches to step 2 (Aperture_Ring)
-    await user.click(screen.getByTestId('pick-aperture-node'));
-    expect(canvas).toHaveAttribute('data-active-node', 'Aperture_Ring');
+    expect(await screen.findByText(/أَحْسَنْتَ! إِجَابَةٌ رَائِعَةٌ وَصَحِيحَةٌ/)).toBeInTheDocument();
+    expect(screen.getByTestId('progress-summary')).toHaveTextContent('1/19');
   });
 
   it('switches to French and left-to-right', async () => {
@@ -274,7 +441,7 @@ describe('App & GLB Curriculum', () => {
     expect(screen.getByRole('button', { name: 'Français' })).toHaveAttribute('aria-pressed', 'true');
     expect(document.documentElement.dir).toBe('ltr');
     expect(await screen.findByText('Connecté')).toBeInTheDocument();
-    expect(await screen.findByText('Optique et physique de la lumière')).toBeInTheDocument();
+    expect(await screen.findByText('Monde de la Découverte — 3 ans')).toBeInTheDocument();
   });
 
   it('reports the API as unavailable when the request fails', async () => {

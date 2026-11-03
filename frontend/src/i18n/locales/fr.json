@@ -2,29 +2,63 @@
   "app": {
     "name": "Nawwar",
     "latinName": "NAWWAR",
-    "tagline": "Une plateforme éducative interactive en 3D",
+    "tagline": "Univers éducatif 3D interactif pour les enfants de 3, 4 et 5 ans",
     "motto": "Le savoir est lumière"
   },
   "language": {
     "label": "Langue"
   },
-  "world": {
-    "title": "Aperçu de la scène 3D",
-    "description": "Scène 3D interactive au format GLB. Faites glisser pour pivoter la caméra ou choisissez un point d’inspection.",
-    "canvasLabel": "Scène 3D affichant le modèle pédagogique au format GLB",
-    "loading": "Chargement du modèle 3D GLB…",
-    "unavailable": "Le rendu 3D n’a pas pu démarrer sur cet appareil (WebGL indisponible).",
-    "assetBadge": "Modèle 3D (.glb)"
+  "nav": {
+    "chooseAge": "Choisir l’âge",
+    "allAges": "Portail des âges",
+    "parentProgress": "Suivi parents",
+    "agePill3": "3 ans",
+    "agePill4": "4 ans",
+    "agePill5": "5 ans"
+  },
+  "ageSelector": {
+    "heading": "Bienvenue dans les mondes éducatifs de Nawwar",
+    "subheading": "Choisissez l’âge de l’enfant pour accéder aux parcours, activités interactives et scènes 3D adaptées :",
+    "enterWorld": "Entrer dans ce monde",
+    "domainsBadge": "domaines d’apprentissage",
+    "coursesBadge": "cours",
+    "activitiesBadge": "activités interactives"
   },
   "curriculum": {
-    "title": "Modules pédagogiques interactifs",
-    "loading": "Chargement du programme…",
-    "unavailable": "Impossible de charger les modules pédagogiques depuis le serveur.",
-    "checkpointsTitle": "Points d’inspection dans la scène 3D",
-    "targetNode": "Nœud 3D ciblé",
-    "progressLabel": "Progression pédagogique",
-    "markComplete": "Valider ce point",
-    "completed": "Terminé"
+    "title": "Domaines et parcours d’apprentissage",
+    "loading": "Chargement du monde éducatif…",
+    "unavailable": "Impossible de charger le programme éducatif depuis le serveur.",
+    "domainsHeading": "Domaines d’apprentissage",
+    "readingPathwayBadge": "Parcours structuré d’apprentissage de la lecture",
+    "objectivesLabel": "Objectifs pédagogiques",
+    "lessonsLabel": "Leçons et activités",
+    "startLesson": "Commencer la leçon",
+    "activeLesson": "Leçon active",
+    "minutesUnit": "min",
+    "scene3DBadge": "Scène 3D interactive",
+    "activitiesHeading": "Activités interactives de la leçon",
+    "listenPrompt": "Écouter la prononciation",
+    "playingAudio": "Lecture audio en cours…",
+    "markComplete": "Valider cette activité ⭐",
+    "completed": "Terminé ⭐",
+    "correctFeedback": "Bravo ! Excellente réponse 🌟",
+    "tryAgainFeedback": "Essaie encore ! Écoute bien l’indice 🎵",
+    "syllableBlendLabel": "Assemble les syllabes :",
+    "sceneTapHint": "Touche les objets dans la scène 3D ou les cartes ci-dessous :",
+    "progressLabel": "Activités réussies"
+  },
+  "progress": {
+    "title": "Tableau de suivi pédagogique (Parents & Éducateurs)",
+    "totalCompleted": "Total des activités validées",
+    "close": "Fermer"
+  },
+  "world": {
+    "title": "Scène 3D interactive",
+    "description": "Scène 3D ludique illustrant l’objectif pédagogique de la leçon.",
+    "canvasLabel": "Scène éducative 3D pour enfants",
+    "loading": "Chargement de la scène 3D…",
+    "unavailable": "Le rendu 3D n’a pas pu démarrer sur cet appareil (WebGL indisponible).",
+    "assetBadge": "Scène 3D (.glb)"
   },
   "status": {
     "title": "État du serveur",
@@ -35,6 +69,6 @@
     "serverLanguage": "Langue de la réponse"
   },
   "footer": {
-    "phase": "Phase 2 : programme interactif et modèles 3D GLB"
+    "phase": "Nawwar — Programme préscolaire interactif (3, 4 et 5 ans)"
   }
 }
