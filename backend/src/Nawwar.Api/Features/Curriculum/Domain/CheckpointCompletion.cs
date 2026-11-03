@@ -16,3 +16,4 @@ public sealed class CheckpointCompletion
 
     public DateTimeOffset CompletedAtUtc { get; init; } = DateTimeOffset.UtcNow;
 }
+

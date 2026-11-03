@@ -136,3 +136,27 @@ This log records significant technical and architectural decisions made for NAWW
 - **Consequences**:
   - Every lesson asset is a single, self-contained `.glb` binary with named nodes (`TargetNodeName`) that can be highlighted directly by curriculum checkpoints.
 
+---
+
+## ADR-0009: Product Realignment to Preschool Age-Based Curriculum (Ages 3, 4, 5) and Decoupled Multi-Modal Activity Architecture
+
+- **Date**: 2026-11-03
+- **Status**: Accepted (Supersedes initial scientific demo catalog scope in ADR-0008 while preserving `.glb` format standard for 3D assets)
+- **Context**:
+  - During Phase 2, the starter curriculum drifted toward secondary-school scientific visualization (optics, planetary astronomy, crystal lattices) and tightly coupled every `Lesson` row to a single `.glb` file (`model_url`) and scene-node checkpoints.
+  - **NAWWAR (نَوَّر)** is fundamentally an Arabic-first, playful 3D educational universe for **preschool children aged 3, 4, and 5 years** (*عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ*، *عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ*، *عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ*).
+- **Decision**:
+  1. **Re-center the entire product around the 7-level preschool curriculum hierarchy**:
+     `AgeGroup` (3, 4, 5) → `LearningDomain` → `CourseCollection` → `Course` → `Lesson` → `Activity` → `LearningObjective` (documented in [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md)).
+  2. **Separate educational content from presentation and 3D scene implementation**:
+     - A `Lesson` is no longer coupled to one mandatory `.glb` file.
+     - Each `Activity` within a lesson specifies its modality (`scene_3d_explore`, `audio_listen_pick`, `visual_match_sort`, `counting_interactive`, `letter_forms_vowels`, `syllable_word_builder`) and references reusable `EducationalAssets` (`.glb` 3D scenes, 2D illustrations, animations) and `AudioAssets`.
+  3. **Prioritize the Age-World Selection UX and Dedicated Age 5 Reading Pathway (`مَسَارُ تَعَلُّمِ القِرَاءَةِ`)** before any authentication or account management (`PHASE A` → `PHASE I` sequence).
+  4. **Preserve reusable infrastructure**: Keep the Docker-first stack, ASP.NET Core 10 + PostgreSQL 18 backend, R3F `WorldCanvas`/`WorldScene` `.glb` loader, `ErrorBoundary`, and RTL `i18next` foundation intact while evolving the curriculum schema in `PHASE C`.
+- **Alternatives Considered**:
+  - Keeping the flat `LearningModule -> Lesson (.glb) -> LessonCheckpoint` model: rejected because it cannot represent age groups, course collections (such as the 6-course Arabic reading pathway), or multi-modal preschool activities (audio, sorting, phonics, syllable building).
+  - Building learner authentication before redesigning the curriculum: rejected because NAWWAR is curriculum-first and preschool learners/parents need frictionless age-world entry.
+- **Consequences**:
+  - Development follows the strict `PHASE A` through `PHASE I` execution order defined in `ROADMAP.md` and `AGENTS.md`.
+
+

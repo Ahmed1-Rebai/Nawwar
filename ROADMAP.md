@@ -1,85 +1,140 @@
-# ROADMAP.md — NAWWAR Development Roadmap
+# ROADMAP.md — NAWWAR (نَوَّر) Preschool Product & Engineering Roadmap
 
-This document defines the phased engineering roadmap, milestones, dependencies, and acceptance criteria for **NAWWAR (نوّار)**.
+This document defines the mandatory, sequential execution roadmap (`PHASE A` through `PHASE I`) for **NAWWAR (نَوَّر)** — an Arabic-first, immersive 3D educational platform for preschool children aged **3, 4, and 5 years**.
+
+> **Execution Rule**: Do not jump to a later phase while an earlier phase remains incomplete. Authentication and learner accounts (`PHASE H`) come only after the complete age-based curriculum, navigation, multi-modal activities, 3D learning scenes, and progress foundations are in place.
 
 ---
 
-## Overview of Phases
+## Mandatory Execution Sequence (`PHASE A` → `PHASE I`)
 
 ```mermaid
-flowchart LR
-    P1["Phase 1: Infrastructure, Docs & RTL/3D Shell (v0.1.0 - Completed)"]
-    P2["Phase 2: Educational Domain, Auth & Persistence (v0.2.0 - Next)"]
-    P3["Phase 3: Interactive 3D Worlds & Asset Pipeline (v0.3.0)"]
-    P4["Phase 4: Hardening, Performance & Release Audit (v1.0.0)"]
+flowchart TD
+    PA["PHASE A: Product Realignment & Repository Audit (Completed)"]
+    PB["PHASE B: Complete Age-Based Curriculum Design — Ages 3, 4, 5 (Completed)"]
+    PC["PHASE C: Curriculum Data Model & Content Architecture (Next — Awaiting Review)"]
+    PD["PHASE D: Main Age-Selection Experience & Educational Navigation"]
+    PE["PHASE E: Implement Actual Courses & Age-Appropriate Activities"]
+    PF["PHASE F: Integrate Playful 3D Scenes into Educational Lessons"]
+    PG["PHASE G: Progress Tracking & Parent Experience"]
+    PH["PHASE H: Authentication & Learner Accounts"]
+    PI["PHASE I: Final Localization, Optimization & Production Readiness"]
 
-    P1 --> P2 --> P3 --> P4
+    PA --> PB --> PC --> PD --> PE --> PF --> PG --> PH --> PI
 ```
 
 ---
 
-## Phase 1 — Docker-First Infrastructure, Documentation & Foundational Shell (`v0.1.0`)
+## Foundational Infrastructure Baseline (Completed Prior to Realignment)
 
-- **Priority**: P0 (Blocker for all subsequent work)
-- **Status**: **Completed & Validated**
-- **Objectives**:
-  - Establish reproducible multi-stage Dockerfiles and Docker Compose configurations (`docker-compose.yml`, `docker-compose.dev.yml`, `docker-compose.prod.yml`).
-  - Bootstrap the ASP.NET Core 10 Minimal API (`Nawwar.Api`) with PostgreSQL 18 connectivity, health checks, and Arabic-first localization (`ar`, `fr`, `en`).
-  - Bootstrap the React 19 + TypeScript 7 + Vite 8 + React Three Fiber frontend shell with RTL-first CSS logical layout, compile-time translation parity, lazy-loaded 3D viewport, and live API status check.
-  - Establish mandatory project documentation (`AGENTS.md`, `ARCHITECTURE.md`, `PROGRESS.md`, `ROADMAP.md`, `DECISIONS.md`, `CHANGELOG.md`, `README.md`, and `docs/`).
-- **Acceptance Criteria**:
-  - [x] `docker compose up --build -d` builds and starts `db`, `api`, and `frontend` with all three reaching `healthy`.
-  - [x] Database state persists across `docker compose down` and `docker compose up -d`.
-  - [x] Frontend unit tests (`vitest`), typecheck (`tsc -b`), and linter (`oxlint --deny-warnings`) pass with zero warnings/errors.
-  - [x] Backend build (`TreatWarningsAsErrors=true`) and integration tests (`xunit.v3`) pass.
-  - [x] Arabic (`ar`, `rtl`) renders by default and switches cleanly to French (`fr`, `ltr`) and English (`en`, `ltr`).
+- [x] Reproducible Docker Compose stack (`db` PostgreSQL 18, `api` ASP.NET Core 10, `frontend` React 19 + Vite 8 + nginx, optional `storage` RustFS S3 profile).
+- [x] Arabic-first (`ar` / `rtl`) localization foundation (`i18next`, compile-time key parity, CSS logical properties, `Noto Sans Arabic Variable`).
+- [x] Reusable React Three Fiber (`WorldCanvas`, `WorldScene`) `.glb` loader, object picking, material disposal, `ErrorBoundary`, and `prefers-reduced-motion` support.
 
 ---
 
-## Phase 2 — Educational Domain Model, `.glb` 3D Lesson Pipeline & Progress Persistence (`v0.2.0`)
+## PHASE A — Product Realignment & Repository Audit
 
-- **Priority**: P1
-- **Status**: **Completed & Validated** (Curriculum domain, `.glb` 3D models & node picking, progress persistence; multi-user authentication scheduled next)
-- **Dependencies**: Phase 1
+- **Status**: **Completed (2026-11-03)**
 - **Objectives**:
-  - Design and implement the core PostgreSQL schema (`learning_modules`, `lessons`, `lesson_checkpoints`, `checkpoint_completions`):
-    - Localized learning modules, `.glb` 3D lessons, and interactive checkpoints (`ar`, `fr`, `en`).
-    - Persistent learner checkpoint progress tracking (`GET /api/v1/curriculum/progress`, `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete`).
-  - Expose versioned REST endpoints under `/api/v1/curriculum/*` with Problem Details validation and integration tests.
-  - Create product specification, educational framework, design system, and schema/API docs (`docs/product/PRODUCT_SPECIFICATION.md`, `docs/product/EDUCATIONAL_FRAMEWORK.md`, `docs/design/DESIGN_SYSTEM.md`, `docs/architecture/DATABASE_SCHEMA.md`, `docs/architecture/API_DESIGN.md`).
-- **Acceptance Criteria**:
-  - [x] PostgreSQL schema and seed modules/lessons/checkpoints initialize cleanly using the `nawwar_app` role on startup.
-  - [x] Localized curriculum endpoints return Arabic content by default with full diacritics preserved, and all 3D models are in `.glb` format (`model/gltf-binary`).
-  - [x] Learner checkpoint completion persists across container restarts and updates the frontend progress summary.
+  - Audit existing backend, frontend, 3D assets, and documentation.
+  - Identify product divergence (scientific optics/astronomy/crystal prototype vs. preschool ages 3–5 vision; tight `.glb` coupling on `Lesson`).
+  - Realign `AGENTS.md`, `ARCHITECTURE.md`, `PROGRESS.md`, `ROADMAP.md`, and `DECISIONS.md` (`ADR-0009`).
 
 ---
 
-## Phase 3 — Interactive 3D Educational Worlds & Asset Pipeline (`v0.3.0`)
+## PHASE B — Complete Age-Based Curriculum Design (Ages 3, 4, 5)
 
-- **Priority**: P1
-- **Status**: Planned (Not started)
-- **Dependencies**: Phase 2 + `storage` Compose profile
-- **Objectives**:
-  - Integrate the S3-compatible `storage` service (`rustfs`) with the backend asset service for glTF/GLB models, compressed textures, and Arabic/French/English voiceover audio.
-  - Build interactive React Three Fiber learning scenes with camera waypoints, object picking, localized 3D annotations, and keyboard/screen-reader accessibility alternatives.
-  - Document the 3D asset budget and design system (`docs/design/DESIGN_SYSTEM.md`).
-- **Acceptance Criteria**:
-  - [ ] 3D lesson scenes load glTF/GLB assets from object storage with progress indicators and memory cleanup on unmount.
-  - [ ] 60 FPS target on mid-range hardware; graceful degradation when WebGL or reduced-motion is active.
-  - [ ] Independent review completed for visual quality, memory disposal, and RTL overlay alignment.
+- **Status**: **Completed (2026-11-03)**
+- **Deliverables**:
+  - [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md):
+    1. Educational philosophy of NAWWAR.
+    2. The three age worlds (*عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ*، *عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ*، *عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ*).
+    3. Learning objectives for Ages 3, 4, and 5.
+    4. Learning domains for each age.
+    5. Course collections for every domain (including the dedicated Age 5 reading pathway `مَسَارُ تَعَلُّمِ القِرَاءَةِ`).
+    6. Course and lesson progression rules.
+    7. Six reusable interactive activity types.
+    8. Age-appropriate 3D interaction concepts.
+    9. Arabic-first vowelization (tashkeel) and audio requirements.
+    10. Future French (`fr`) and English (`en`) localization strategy.
+  - [`docs/product/USER_FLOWS.md`](docs/product/USER_FLOWS.md), [`docs/product/PRODUCT_SPECIFICATION.md`](docs/product/PRODUCT_SPECIFICATION.md), and [`docs/product/EDUCATIONAL_FRAMEWORK.md`](docs/product/EDUCATIONAL_FRAMEWORK.md).
 
 ---
 
-## Phase 4 — Performance, Security Audit & Release Readiness (`v1.0.0`)
+## PHASE C — Curriculum Data Model & Content Architecture
 
-- **Priority**: P2
-- **Status**: Planned (Not started)
-- **Dependencies**: Phase 3
+- **Status**: **Proposed — Ready for Implementation Upon Approval**
+- **Dependencies**: PHASE A, PHASE B
 - **Objectives**:
-  - End-to-end Playwright browser test suite covering RTL/LTR flows, lesson progression, and 3D canvas interactions.
-  - Production security and performance audit (`docker-compose.prod.yml`, CSP headers, rate limiting, bundle budgets).
-  - Deployment guide (`docs/infrastructure/DEPLOYMENT.md`).
-- **Acceptance Criteria**:
-  - [ ] Full automated E2E suite passes against the production Docker Compose stack.
-  - [ ] Independent security and localization review sign-off.
+  - Replace the flat prototype module/checkpoint schema with the decoupled 7-level preschool curriculum schema in PostgreSQL 18 (`NawwarDbContext`):
+    - `AgeGroups` (`age_groups`: 3, 4, 5 years)
+    - `LearningDomains` (`learning_domains`)
+    - `CourseCollections` (`course_collections`, e.g., `مَسَارُ تَعَلُّمِ القِرَاءَةِ`)
+    - `Courses` (`courses`)
+    - `Lessons` (`lessons` — decoupled from any single `.glb` file)
+    - `Activities` (`activities` — multi-modal activity definitions)
+    - `LearningObjectives` (`learning_objectives`)
+    - `EducationalAssets` & `AudioAssets` (`educational_assets`, `audio_assets`)
+    - `Translations` (`content_translations`)
+    - `ProgressDefinitions` & activity completion records
+  - Expose REST endpoints under `/api/v1/curriculum/age-groups`, `/api/v1/curriculum/age-groups/{age}/domains`, `/api/v1/curriculum/courses/{slug}`, and `/api/v1/curriculum/lessons/{slug}`.
 
+---
+
+## PHASE D — Main Age-Selection Experience & Educational Navigation
+
+- **Status**: Planned (After PHASE C)
+- **Dependencies**: PHASE C
+- **Objectives**:
+  - Redesign the main entry screen around the three preschool age-group portals:
+    - **عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ**
+    - **عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ**
+    - **عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ**
+  - Build child- and parent-friendly RTL/LTR navigation through **Learning Domains → Course Collections → Courses → Lessons → Activities**.
+
+---
+
+## PHASE E — Implement Actual Courses & Age-Appropriate Activities
+
+- **Status**: Planned (After PHASE D)
+- **Dependencies**: PHASE D
+- **Objectives**:
+  - Implement the multi-modal activity engine supporting audio listening/picking, visual matching/sorting, interactive counting (1–3, 1–10, 1–20 + simple addition), Arabic letter discovery, positional letter forms, short vowels (*الفتحة، الكسرة، الضمة*), syllable construction, word reading, and short vocalized sentence reading.
+  - Seed authentic, fully vowelized Arabic courses across Ages 3, 4, and 5 (including all 6 courses of `مَسَارُ تَعَلُّمِ القِرَاءَةِ`).
+
+---
+
+## PHASE F — Integrate Playful 3D Scenes into Educational Lessons
+
+- **Status**: Planned (After PHASE E)
+- **Dependencies**: PHASE E
+- **Objectives**:
+  - Create and integrate age-appropriate `.glb` 3D scenes (3D Color & Shape Garden, Friendly Farm Animals, 3D Counting Toys, 3D Arabic Letters & Syllables) into `scene_3d_explore` activities using `WorldCanvas` / `WorldScene`.
+
+---
+
+## PHASE G — Progress Tracking & Parent Experience
+
+- **Status**: Planned (After PHASE F)
+- **Dependencies**: PHASE F
+- **Objectives**:
+  - Track completed activities, lessons, courses, and mastered learning objectives per age group, with a clear parent overview screen.
+
+---
+
+## PHASE H — Authentication & Learner Accounts
+
+- **Status**: Planned (Deferred until PHASE G is complete)
+- **Dependencies**: PHASE G
+- **Objectives**:
+  - Add parent accounts and multiple child learner profiles (with age selection) that attach seamlessly to the `PHASE G` progress system.
+
+---
+
+## PHASE I — Final Localization, Optimization & Production Readiness
+
+- **Status**: Planned (Final phase)
+- **Dependencies**: PHASE H
+- **Objectives**:
+  - Complete French (`fr`) and English (`en`) content/audio coverage per the localization strategy in `AGE_BASED_CURRICULUM.md`, Playwright E2E suite, performance tuning, and production security audit.

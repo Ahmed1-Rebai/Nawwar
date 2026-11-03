@@ -6,28 +6,43 @@
 
 ## 1. Project Vision and Objectives
 
-**NAWWAR (نوّار)** — *"Knowledge is Light" (العِلْمُ نُورٌ)* — is an Arabic-first, interactive 3D educational web platform.
+**NAWWAR (نَوَّر)** — *"Knowledge is Light" (العِلْمُ نُورٌ)* — is an Arabic-first, immersive 3D educational platform for **preschool children aged 3, 4, and 5 years** (*عُمْرُ 3 وَ4 وَ5 سَنَوَاتٍ*).
 
-Its core objectives are:
-1. Deliver an engaging, interactive 3D learning experience in the browser powered by WebGL / Three.js (`@react-three/fiber`).
-2. Treat **Arabic (`ar`, RTL)** as the primary, first-class language and user experience — never as a secondary translation of an English layout — while supporting **French (`fr`, LTR)** and **English (`en`, LTR)** seamlessly.
-3. Maintain a clean, reproducible, Docker-first full-stack architecture backed by ASP.NET Core 10 and PostgreSQL 18.
-4. Preserve strict engineering continuity across AI agent sessions through living, truthful repository documentation.
+**What NAWWAR IS**:
+- A playful, beautifully designed educational universe where young children (ages 3, 4, and 5) learn through age-appropriate courses, interactive activities, spoken Arabic audio, illustrations, animations, and supportive 3D exploration.
+- **Central Product Objective**: **Build a complete, structured educational curriculum organized by age (3, 4, and 5), with interactive 3D experiences and multi-modal activities supporting each learning objective.**
+
+**What NAWWAR IS NOT**:
+- NOT a general scientific visualization platform or physics/astronomy simulator.
+- NOT a collection of abstract 3D experiments or a raw `.glb` model inspector.
+- NOT an authentication-first application (authentication comes last, in `PHASE H`).
+
+Its core engineering objectives are:
+1. Organize all educational content around the three preschool age groups (**عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ**, **عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ**, **عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ**) using the 7-level hierarchy (`AgeGroup` → `LearningDomain` → `CourseCollection` → `Course` → `Lesson` → `Activity` → `LearningObjective`), including the dedicated Age 5 Arabic reading pathway (`مَسَارُ تَعَلُّمِ القِرَاءَةِ`).
+2. Separate educational content from presentation and 3D scene implementation so activities can combine 3D scenes, 2D illustrations, audio, animations, sorting/matching, and interactive quizzes.
+3. Treat **Arabic (`ar`, RTL)** as the primary, first-class language and user experience — with full diacritics (tashkeel) and child-friendly audio — while supporting future **French (`fr`, LTR)** and **English (`en`, LTR)** localization cleanly.
+4. Maintain a reproducible, Docker-first full-stack architecture backed by ASP.NET Core 10 and PostgreSQL 18, and preserve strict continuity across AI agent sessions.
 
 ---
 
-## 2. Product Scope (Current vs. Planned)
+## 2. Product Scope & Required Execution Sequence (`PHASE A` → `PHASE I`)
 
-- **Implemented in Phase 1 & Phase 2 (`v0.1.0` – `v0.2.0`)**:
+All development must follow this exact sequence (see [`ROADMAP.md`](ROADMAP.md) and [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md)):
+- **PHASE A — Product Realignment & Repository Audit** *(Completed)*
+- **PHASE B — Complete Age-Based Curriculum Design (`docs/product/AGE_BASED_CURRICULUM.md`)** *(Completed)*
+- **PHASE C — Curriculum Data Model & Content Architecture** *(Proposed — Awaiting Approval)*
+- **PHASE D — Main Age-Selection Experience & Educational Navigation**
+- **PHASE E — Implement Actual Courses & Age-Appropriate Activities**
+- **PHASE F — Integrate Playful 3D Scenes into Educational Lessons**
+- **PHASE G — Progress Tracking & Parent Experience**
+- **PHASE H — Authentication & Learner Accounts** *(Deferred until Curriculum & Activities are complete)*
+- **PHASE I — Final Localization, Optimization & Production Readiness**
+
+- **Currently Implemented Infrastructure Baseline**:
   - Reproducible Docker Compose stack (`db`, `api`, `frontend`, and optional `storage` profile).
-  - React 19 + TypeScript 7 + Vite 8 frontend shell with Arabic-first (`ar` / `rtl`) localization (`i18next`), language switcher (`ar`, `fr`, `en`), CSS logical layout, lazy-loaded React Three Fiber 3D `.glb` scene (`WorldCanvas`, `WorldScene`), direct 3D mesh node picking, material disposal on unmount, `CurriculumExplorer` with persistent checkpoint completion, WebGL `ErrorBoundary`, and live backend connectivity status.
-  - ASP.NET Core 10 Minimal API (`Nawwar.Api`) with Arabic-first request localization (`ar`, `fr`, `en`), `/health/live`, `/health/ready`, `/api/v1/system/info`, `/api/v1/curriculum/modules`, `/api/v1/curriculum/lessons/{slug}`, `/api/v1/curriculum/progress`, and `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete`.
-  - PostgreSQL 18 database with automatic least-privilege application role provisioning (`infra/postgres/init/10-create-app-role.sh`), persistent volume storage, and curriculum/progress tables (`learning_modules`, `lessons` with `ck_lessons_model_url_glb`, `lesson_checkpoints`, `checkpoint_completions`).
-  - Optional S3-compatible object storage service (`rustfs/rustfs:1.0.4`) under the `storage` Compose profile.
-- **Planned for Subsequent Phases** (see [`ROADMAP.md`](ROADMAP.md)):
-  - Multi-user authentication, authorization, and learner accounts.
-  - S3-backed asset upload/streaming pipeline and spatial audio narration (Phase 3).
-  - Playwright E2E browser suite and release security audit (Phase 4).
+  - React 19 + TypeScript 7 + Vite 8 frontend shell with Arabic-first (`ar` / `rtl`) localization (`i18next`), CSS logical layout, lazy-loaded React Three Fiber 3D `.glb` scene (`WorldCanvas`, `WorldScene`), direct 3D mesh node picking, material disposal on unmount, WebGL `ErrorBoundary`, and live backend connectivity status.
+  - ASP.NET Core 10 Minimal API (`Nawwar.Api`) with Arabic-first request localization (`ar`, `fr`, `en`), `/health/live`, `/health/ready`, `/api/v1/system/info`, and initial prototype curriculum endpoints (scheduled to be replaced by the `PHASE C` age-based curriculum schema upon approval).
+  - PostgreSQL 18 database with automatic least-privilege application role provisioning (`infra/postgres/init/10-create-app-role.sh`) and persistent volume storage.
 
 Never describe planned features as already implemented.
 

@@ -1,6 +1,6 @@
-# نوّار | NAWWAR
+# نَوَّر | NAWWAR
 
-**NAWWAR (نوّار)** — *"Knowledge is Light" (العِلْمُ نُورٌ)* — is an Arabic-first, interactive 3D educational web platform built with React 19, Three.js (`@react-three/fiber`), ASP.NET Core 10, and PostgreSQL 18.
+**NAWWAR (نَوَّر)** — *"Knowledge is Light" (العِلْمُ نُورٌ)* — is an Arabic-first, immersive 3D educational platform for **preschool children aged 3, 4, and 5 years** (*عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ*، *عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ*، *عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ*) built with React 19, Three.js (`@react-three/fiber`), ASP.NET Core 10, and PostgreSQL 18.
 
 ---
 
@@ -111,9 +111,11 @@ docker build --target test -t nawwar/frontend:test ./frontend
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Current system, frontend, 3D, localization, API, database, and container architecture |
 | [`PROGRESS.md`](PROGRESS.md) | Truthful implementation progress, verification results, and next steps |
 | [`ROADMAP.md`](ROADMAP.md) | Phased development roadmap and acceptance criteria |
-| [`DECISIONS.md`](DECISIONS.md) | Architecture Decision Records (`ADR-0001` – `ADR-0008`) |
+| [`DECISIONS.md`](DECISIONS.md) | Architecture Decision Records (`ADR-0001` – `ADR-0009`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Versioned project changelog |
-| [`docs/product/PRODUCT_SPECIFICATION.md`](docs/product/PRODUCT_SPECIFICATION.md) | Product vision, personas, and implemented capabilities |
+| [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md) | **Canonical Preschool Curriculum (Ages 3, 4, 5)**, domains, course collections, and Age 5 reading pathway (`مَسَارُ تَعَلُّمِ القِرَاءَةِ`) |
+| [`docs/product/USER_FLOWS.md`](docs/product/USER_FLOWS.md) | Age-World Selection portal and child/parent navigation flows |
+| [`docs/product/PRODUCT_SPECIFICATION.md`](docs/product/PRODUCT_SPECIFICATION.md) | Product vision, personas, and core principles |
 | [`docs/product/EDUCATIONAL_FRAMEWORK.md`](docs/product/EDUCATIONAL_FRAMEWORK.md) | Pedagogical principles and `.glb` 3D curriculum matrix |
 | [`docs/design/DESIGN_SYSTEM.md`](docs/design/DESIGN_SYSTEM.md) | Color tokens, Arabic typography, and RTL layout rules |
 | [`docs/architecture/DATABASE_SCHEMA.md`](docs/architecture/DATABASE_SCHEMA.md) | PostgreSQL 18 ER diagram, tables, and `.glb` check constraints |

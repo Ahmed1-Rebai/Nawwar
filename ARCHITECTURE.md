@@ -1,12 +1,12 @@
 # ARCHITECTURE.md — NAWWAR Technical Architecture
 
-> This document describes the **actual implemented architecture** of NAWWAR as of Phase 1 (v0.1.0). Update it whenever a component, contract, or infrastructure setting changes.
+> This document describes both the **currently running infrastructure/codebase** and the **realigned preschool educational architecture (`ADR-0009`, Phases A–I)** for **NAWWAR (نَوَّر)** — an Arabic-first, immersive 3D educational platform for children aged **3, 4, and 5 years**.
 
 ---
 
 ## 1. System Overview
 
-NAWWAR is a containerized, Arabic-first 3D educational web application composed of three core services and one optional object-storage service:
+NAWWAR is a containerized, Arabic-first 3D educational web application for preschool children (ages 3, 4, and 5) composed of three core services and one optional object-storage service:
 
 ```mermaid
 flowchart LR
@@ -35,6 +35,8 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 - **ADR-0005**: Same-origin `/api` reverse proxy (nginx in production, Vite dev server in development) eliminating cross-origin credential and CORS fragility.
 - **ADR-0006**: Least-privilege PostgreSQL role (`nawwar_app`) created automatically on first volume initialization.
 - **ADR-0007**: Optional S3-compatible object storage using `rustfs/rustfs:1.0.4` under a Compose profile (`storage`), replacing discontinued upstream MinIO Docker Hub images.
+- **ADR-0008**: Mandatory binary glTF 2.0 (`.glb`) standard (`model/gltf-binary`) for 3D scene assets.
+- **ADR-0009**: Product realignment to the preschool age-based curriculum (Ages 3, 4, 5 — *عَالَمُ الاِكْتِشَافِ*، *عَالَمُ الاِسْتِكْشَافِ*، *عَالَمُ التَّعَلُّمِ*), decoupling lessons/activities from single `.glb` files, and deferring authentication until `PHASE H`.
 
 ---
 
@@ -63,13 +65,38 @@ All architectural choices are recorded as ADRs in [`DECISIONS.md`](DECISIONS.md)
 
 ## 5. Educational Content Architecture (`Features/Curriculum` & `features/curriculum`)
 
-- **Domain entities** ([`backend/src/Nawwar.Api/Features/Curriculum/Domain/`](backend/src/Nawwar.Api/Features/Curriculum/Domain/Lesson.cs)):
-  - `LearningModule` (`learning_modules`): localized module metadata (`ar`, `fr`, `en`) and display order.
-  - `Lesson` (`lessons`): localized title/objective, `.glb` asset URL (`model_url` enforced by check constraint `ck_lessons_model_url_glb`), `ModelFormat` (`model/gltf-binary`), and camera coordinates.
-  - `LessonCheckpoint` (`lesson_checkpoints`): ordered 3D inspection steps referencing a named node (`TargetNodeName`) and 3D focus point inside the `.glb` model.
-  - `CheckpointCompletion` (`checkpoint_completions`): persistent learner checkpoint completion records indexed uniquely by `(learner_key, lesson_slug, step_order)`.
-- **Frontend Explorer** ([`CurriculumExplorer.tsx`](frontend/src/features/curriculum/CurriculumExplorer.tsx)):
-  - Fetches `/api/v1/curriculum/modules`, `/api/v1/curriculum/lessons/{slug}`, and `/api/v1/curriculum/progress` with `Accept-Language`, synchronizes the active `.glb` model and checkpoint node (via both tab selection and direct 3D mesh clicks) with `WorldCanvas`, and records completed checkpoints via `POST /api/v1/curriculum/lessons/{slug}/checkpoints/{stepOrder}/complete`.
+### 5.1 Current Codebase State (Pre-Phase C Audit)
+- The repository currently runs an initial prototype slice (`LearningModule` → `Lesson` → `LessonCheckpoint` + `CheckpointCompletion`) under `backend/src/Nawwar.Api/Features/Curriculum/` and `frontend/src/features/curriculum/CurriculumExplorer.tsx`.
+- **Identified Divergence (Resolved by `ADR-0009`)**:
+  1. The prototype seeded secondary-school scientific topics (optics, astronomy, crystal lattices) instead of the preschool (ages 3, 4, 5) curriculum.
+  2. Every `Lesson` row was tightly coupled to a single `.glb` file (`model_url`) and 3D node checkpoints, whereas preschool lessons require multi-modal activities (3D exploration, audio listening, visual matching/sorting, counting, letter forms, short vowels *الفتحة/الكسرة/الضمة*, and syllable/word/sentence reading).
+
+### 5.2 Target Realigned Curriculum & Activity Architecture (`PHASE C` – `PHASE G`)
+
+Per [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md) and `ADR-0009`, educational content is separated from presentation and 3D scene implementation across a 7-level hierarchy:
+
+```mermaid
+erDiagram
+    AGE_GROUPS ||--o{ LEARNING_DOMAINS : organizes
+    LEARNING_DOMAINS ||--o{ COURSE_COLLECTIONS : groups
+    COURSE_COLLECTIONS ||--o{ COURSES : contains
+    COURSES ||--o{ LESSONS : sequences
+    LESSONS ||--o{ ACTIVITIES : delivers
+    ACTIVITIES }o--o{ LEARNING_OBJECTIVES : achieves
+    ACTIVITIES }o--o{ EDUCATIONAL_ASSETS : references_visual_or_3d
+    ACTIVITIES }o--o{ AUDIO_ASSETS : plays_narration
+```
+
+- **Core Curriculum Entities (`PHASE C`)**:
+  - `AgeGroup`: `3` (*عَالَمُ الاِكْتِشَافِ — 3 سَنَوَاتٍ*), `4` (*عَالَمُ الاِسْتِكْشَافِ — 4 سَنَوَاتٍ*), `5` (*عَالَمُ التَّعَلُّمِ — 5 سَنَوَاتٍ*).
+  - `LearningDomain`: Domain within an age group (e.g., *اللُّغَةُ العَرَبِيَّةُ*، *الأَلْوَانُ وَالأَشْكَالُ*، *الأَعْدَادُ وَالحِسَابُ*، *الحَيَوَانَاتُ وَالطَّبِيعَةُ*، *المَنْطِقُ*).
+  - `CourseCollection`: Ordered pathway within a domain (e.g., **`مَسَارُ تَعَلُّمِ القِرَاءَةِ`** for Age 5 Arabic reading).
+  - `Course`: Structured course with `TitleAr`, `DescriptionAr`, `TargetAge`, `DisplayOrder`, `DifficultyLevel`, `CompletionCriteria`, and linked `LearningObjectives`.
+  - `Lesson`: Pedagogical lesson unit within a course (decoupled from any single `.glb` file).
+  - `Activity`: Multi-modal interactive step (`scene_3d_explore`, `audio_listen_pick`, `visual_match_sort`, `counting_interactive`, `letter_forms_vowels`, `syllable_word_builder`) with a JSON configuration payload and references to `EducationalAssets` (`.glb` scenes, 2D illustrations, animations) and `AudioAssets`.
+  - `LearningObjective`: Measurable early-childhood learning outcome.
+  - `ContentTranslation`: Localization table (`ar` primary, `fr`, `en`) for translatable text and audio references.
+  - `ProgressDefinition` & `ActivityCompletion`: Tracks completion across activities, lessons, and courses without requiring authentication in early phases (`PHASE G`), ready to bind to learner profiles in `PHASE H`.
 
 ---
 

@@ -5,6 +5,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [Unreleased] — 2026-11-03 (PHASE A & PHASE B: Product Realignment to Preschool Ages 3, 4, and 5)
+
+### Added
+- [`docs/product/AGE_BASED_CURRICULUM.md`](docs/product/AGE_BASED_CURRICULUM.md): Complete preschool curriculum specification for Ages 3 (*عَالَمُ الاِكْتِشَافِ*), 4 (*عَالَمُ الاِسْتِكْشَافِ*), and 5 (*عَالَمُ التَّعَلُّمِ*), including the 7-level hierarchy (`AgeGroup -> LearningDomain -> CourseCollection -> Course -> Lesson -> Activity -> LearningObjective`), the 6-course Age 5 Arabic reading pathway (`مَسَارُ تَعَلُّمِ القِرَاءَةِ`), 6 multi-modal activity types, playful 3D interaction concepts, and Arabic-first vowelization/audio rules.
+- [`docs/product/USER_FLOWS.md`](docs/product/USER_FLOWS.md): Redesigned user journey starting with the Age-World Selection portal.
+- `ADR-0009` in [`DECISIONS.md`](DECISIONS.md) recording the product realignment, decoupled multi-modal activity architecture, and deferral of authentication to `PHASE H`.
+
+### Changed
+- Realigned [`AGENTS.md`](AGENTS.md), [`ARCHITECTURE.md`](ARCHITECTURE.md), [`PROGRESS.md`](PROGRESS.md), [`ROADMAP.md`](ROADMAP.md), [`README.md`](README.md), [`docs/product/PRODUCT_SPECIFICATION.md`](docs/product/PRODUCT_SPECIFICATION.md), and [`docs/product/EDUCATIONAL_FRAMEWORK.md`](docs/product/EDUCATIONAL_FRAMEWORK.md) around the `PHASE A` → `PHASE I` preschool roadmap.
+
+---
+
 ## [0.2.0] — 2026-11-03 (Phase 2: Interactive Curriculum, `.glb` 3D Lesson Pipeline & Progress Persistence)
 
 ### Added

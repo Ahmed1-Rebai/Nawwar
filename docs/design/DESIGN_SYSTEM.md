@@ -31,3 +31,4 @@ NAWWAR pairs a deep nocturnal observatory palette (`#0b1424`–`#1a2c4b`) with w
   - `letter-spacing: normal` (never apply positive tracking to Arabic text).
 - **CSS Logical Properties**:
   - All spacing, borders, and alignment use logical properties (`margin-inline`, `padding-inline`, `border-inline-start`, `text-align: start`) so switching `document.documentElement.dir` between `rtl` and `ltr` flips the entire layout automatically.
+
