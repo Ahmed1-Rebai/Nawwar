@@ -425,6 +425,18 @@ describe('NAWWAR Preschool Age-Based Curriculum & Multi-Modal Activities', () =>
     expect(await screen.findByText('مَسَارُ تَعَلُّمِ القِرَاءَةِ')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 4, name: 'بِنَاءُ المَقَاطِعِ' })).toBeInTheDocument();
 
+    // Step 1: Child starts in the "Learn & Sound" phase first (not directly in the quiz)
+    expect(await screen.findByTestId('journey-step-learn')).toBeInTheDocument();
+    expect(screen.queryByTestId('journey-step-exercise')).not.toBeInTheDocument();
+
+    // Advance to Step 2: Common words (animals, fruits, everyday objects)
+    await user.click(screen.getByTestId('go-to-step-2'));
+    expect(await screen.findByTestId('journey-step-words')).toBeInTheDocument();
+
+    // Advance to Step 3: Friendly exercise at the end
+    await user.click(screen.getByTestId('go-to-step-3'));
+    expect(await screen.findByTestId('journey-step-exercise')).toBeInTheDocument();
+
     const katabaOption = await screen.findByRole('button', { name: /كَتَبَ/ });
     await user.click(katabaOption);
 

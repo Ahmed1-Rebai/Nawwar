@@ -144,3 +144,4 @@ export function CountingPlayground({ config }: CountingPlaygroundProps) {
     </div>
   );
 }
+

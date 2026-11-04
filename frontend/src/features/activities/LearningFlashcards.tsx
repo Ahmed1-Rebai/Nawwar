@@ -11,9 +11,9 @@ interface LearningFlashcardsProps {
 }
 
 /**
- * Interactive spoken flashcard deck ("exercise of information") displayed at the
- * start of a lesson activity so the child can explore and listen to each concept
- * before answering the challenge question.
+ * Step 1 — Interactive spoken flashcard deck ("نَتَعَلَّمُ الدَّرْسَ وَالصَّوْتَ")
+ * where the child explores and listens to each letter, sound, number, or concept
+ * before seeing common words (Step 2) or playing the friendly exercise (Step 3).
  */
 export function LearningFlashcards({ cards }: LearningFlashcardsProps) {
   const { i18n } = useTranslation();
@@ -30,22 +30,33 @@ export function LearningFlashcards({ cards }: LearningFlashcardsProps) {
       setExploredIndices((prev) => [...prev, index]);
     }
     const title = pickLocalizedText(i18n.language, card.titleAr, card.titleFr, card.titleEn);
+    const soundBadge = card.soundBadgeAr
+      ? pickLocalizedText(
+          i18n.language,
+          card.soundBadgeAr,
+          card.soundBadgeFr ?? card.soundBadgeAr,
+          card.soundBadgeEn ?? card.soundBadgeAr,
+        )
+      : '';
     const fact = pickLocalizedText(i18n.language, card.factAr, card.factFr, card.factEn);
-    speakLocalizedText(`${title}. ${fact}`, i18n.language);
+    speakLocalizedText(
+      soundBadge ? `${title}. ${soundBadge}. ${fact}` : `${title}. ${fact}`,
+      i18n.language,
+    );
   };
 
   const sectionTitle = pickLocalizedText(
     i18n.language,
-    '📖 بِطَاقَاتُ التَّعَلُّمِ وَالمَعْلُومَاتِ — اِضْغَطْ عَلَى كُلِّ بِطَاقَةٍ لِتَسْتَمِعَ وَتَتَعَلَّمَ!',
-    '📖 Cartes d’apprentissage — Touche chaque carte pour écouter et découvrir !',
-    '📖 Learning Flashcards — Tap each card to listen and discover!',
+    '📖 الخُطْوَةُ الأُولَى: نَتَعَلَّمُ الدَّرْسَ وَالصَّوْتَ — اِضْغَطْ عَلَى كُلِّ بِطَاقَةٍ لِتَسْتَمِعَ وَتُرَدِّدَ!',
+    '📖 Étape 1 : Apprenons la leçon et le son — Touche chaque carte pour écouter et répéter !',
+    '📖 Step 1: Learn the Concept & Sound — Tap each card to listen and repeat!',
   );
 
   const exploredLabel = pickLocalizedText(
     i18n.language,
-    `اِكْتَشَفْتَ ${exploredIndices.length} مِنْ ${cards.length}`,
-    `${exploredIndices.length} / ${cards.length} découvertes`,
-    `Explored ${exploredIndices.length} of ${cards.length}`,
+    `تَعَلَّمْتَ ${exploredIndices.length} مِنْ ${cards.length}`,
+    `${exploredIndices.length} / ${cards.length} apprises`,
+    `Learned ${exploredIndices.length} of ${cards.length}`,
   );
 
   return (
@@ -61,6 +72,14 @@ export function LearningFlashcards({ cards }: LearningFlashcardsProps) {
           const isActive = activeIndex === idx;
           const title = pickLocalizedText(i18n.language, card.titleAr, card.titleFr, card.titleEn);
           const fact = pickLocalizedText(i18n.language, card.factAr, card.factFr, card.factEn);
+          const soundBadge = card.soundBadgeAr
+            ? pickLocalizedText(
+                i18n.language,
+                card.soundBadgeAr,
+                card.soundBadgeFr ?? card.soundBadgeAr,
+                card.soundBadgeEn ?? card.soundBadgeAr,
+              )
+            : null;
 
           return (
             <article
@@ -82,6 +101,7 @@ export function LearningFlashcards({ cards }: LearningFlashcardsProps) {
                 <span className="learning-flashcard__speaker" aria-hidden="true">
                   🔊
                 </span>
+                {soundBadge && <span className="learning-flashcard__sound-pill">{soundBadge}</span>}
                 <span className="learning-flashcard__status" aria-hidden="true">
                   {isExplored ? '⭐' : '✨'}
                 </span>

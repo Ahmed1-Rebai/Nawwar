@@ -46,7 +46,7 @@
   - `components/layout/AppHeader.tsx`, `components/layout/AppFooter.tsx`, `components/AudioPromptButton.tsx`
   - `features/age-selector/AgeWorldSelector.tsx`
   - `features/curriculum/DomainGrid.tsx`, `CoursePathwayView.tsx`, `LessonStageView.tsx` (with visual lesson progress bar, star counter, and **"النَّشَاطُ التَّالِي ⬅" / "الدَّرْسُ التَّالِي ⬅"** progression buttons), `CurriculumWorkspace.tsx`
-  - `features/activities/types.ts`, `LearningFlashcards.tsx` (spoken discovery flashcards), `CountingPlayground.tsx` (interactive tap-to-count & visual addition `3 + 2 = 5`), `LetterVowelStudio.tsx` (interactive Arabic letter forms `بـ/ـبـ/ـب` & short vowels `بَ/بِ/بُ` spotlight), `SyllableBuilderPlayground.tsx` (interactive syllable-tile assembler), `Scene3DExploreActivity.tsx`, `InteractiveChoiceActivity.tsx`, `ActivityRenderer.tsx`
+  - `features/activities/types.ts`, `LearningFlashcards.tsx` (Step 1: spoken concept & sound cards), `CommonWordsShowcase.tsx` (Step 2: common words in animals, fruits & everyday objects), `CountingPlayground.tsx` (interactive tap-to-count & visual addition `3 + 2 = 5`), `LetterVowelStudio.tsx` (interactive Arabic letter forms `بـ/ـبـ/ـب` & short vowels `بَ/بِ/بُ` spotlight), `SyllableBuilderPlayground.tsx` (interactive syllable-tile assembler), `Scene3DExploreActivity.tsx`, `InteractiveChoiceActivity.tsx` (3-step pedagogical wizard: Step 1 Learn & Sound → Step 2 Common Words → Step 3 Friendly Exercise), `ActivityRenderer.tsx`
   - `features/progress/ParentProgressPanel.tsx`
   - `styles/tokens.css`, `styles/layout.css`, `styles/age-worlds.css`, `styles/activities.css` (bright child-friendly storybook palette, tactile 3D push-buttons, responsive mobile/tablet/desktop breakpoints, and CSS logical properties only)
 

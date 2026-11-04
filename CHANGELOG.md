@@ -14,11 +14,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     - **Age 4 (`4` domains, `5` courses, `6` activities)**: Added `الأَلْوَانُ، الأَشْكَالُ، وَالأَنْمَاطُ المَنْطِقِيَّةُ` (*Color Mixing, Shapes & Patterns*) and enriched counting (`age4-count-five-apples`) with interactive tap-to-count items.
     - **Age 5 (`4` domains, `9` courses, `10` activities)**: Added `الطَّبِيعَةُ وَعَجَائِبُ السَّمَاءِ وَالمَاءِ` (*Wonders of Nature, Day, Night & Water*) and enriched the 6-course Arabic reading pathway (`مَسَارُ تَعَلُّمِ القِرَاءَةِ`) and early addition (`age5-math-add-3-plus-2`) with interactive studio and counting payloads.
   - Updated `CurriculumInitializer` to automatically re-synchronize catalog updates while preserving `activity_completions`.
-- **Interactive JavaScript/React Course Learning Exercises (`frontend/src/features/activities/` & `curriculum/`)**:
-  - `LearningFlashcards.tsx`: Spoken discovery flashcards ("exercise of information") at the top of activities with `window.speechSynthesis` Arabic narration and star tracking.
-  - `CountingPlayground.tsx`: Interactive tap-to-count and visual addition (`3 + 2 = 5`) playground with spoken Arabic numerals (`١ · وَاحِدٌ`, `٢ · اِثْنَانِ`...).
-  - `LetterVowelStudio.tsx`: Interactive Arabic Letter Forms (`بـ / ـبـ / ـب`) and Short Vowels (`بَ / بِ / بُ`) spotlight studio with calligraphic preview and illustrated anchor words.
-  - `SyllableBuilderPlayground.tsx`: Interactive syllable-tile assembler with per-tile and full-word blended audio.
+- **Interactive JavaScript/React 3-Step Course Pedagogical Journey (`frontend/src/features/activities/` & `curriculum/`)**:
+  - Updated `InteractiveChoiceActivity.tsx` to guide the child through 3 progressive steps instead of jumping straight into a quiz:
+    1. **Step 1 (`١. نَتَعَلَّمُ الدَّرْسَ وَالصَّوْتَ 🔊`)**: Learn the letter/number/color/concept and listen to its sound via `LearningFlashcards.tsx`, `LetterVowelStudio.tsx`, `CountingPlayground.tsx`, and `SyllableBuilderPlayground.tsx`.
+    2. **Step 2 (`٢. كَلِمَاتٌ مَأْلُوفَةٌ — حَيَوَانَاتٌ وَأَشْيَاءُ 🦁🍎`)**: New `CommonWordsShowcase.tsx` displaying the learned letter/concept in familiar everyday words (animals `🐾 حَيَوَانٌ`, fruits `🍎 فَاكِهَةٌ`, objects & nature `🏠 شَيْءٌ مَأْلُوفٌ`) with spoken words and sentences.
+    3. **Step 3 (`٣. تَمْرِينٌ لَطِيفٌ 🎯`)**: Friendly illustrated exercise at the end of the lesson.
   - Enhanced `LessonStageView.tsx` and `CurriculumWorkspace.tsx` with visual lesson progress bars, star counters, and **"النَّشَاطُ التَّالِي ⬅" / "الدَّرْسُ التَّالِي ⬅"** progression buttons.
 - **Warm, Child-Friendly, Fully Responsive Storybook Design (`frontend/src/styles/`)**:
   - Redesigned `tokens.css`, `layout.css`, `age-worlds.css`, and `activities.css` with a bright, warm storybook color palette (`#fffaf0` / `#eef9ff` / `#fef3c7`), tactile 3D push-buttons, and responsive mobile/tablet/desktop breakpoints using CSS logical properties exclusively.

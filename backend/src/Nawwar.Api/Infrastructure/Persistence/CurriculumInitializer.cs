@@ -54,7 +54,11 @@ public static class CurriculumInitializer
             .Sum(l => l.Activities.Count);
 
         var currentActivityCount = await db.Activities.CountAsync(cancellationToken);
-        if (currentActivityCount != expectedActivityCount)
+        var hasUpdatedWordExamples = await db.Activities.AnyAsync(
+            a => a.InteractionPayloadJson.Contains("wordExamples"),
+            cancellationToken);
+
+        if (currentActivityCount != expectedActivityCount || !hasUpdatedWordExamples)
         {
             await db.AgeGroups.ExecuteDeleteAsync(cancellationToken);
             db.AgeGroups.AddRange(seedAgeGroups);

@@ -114,3 +114,4 @@ export function LetterVowelStudio({ studio }: LetterVowelStudioProps) {
     </div>
   );
 }
+

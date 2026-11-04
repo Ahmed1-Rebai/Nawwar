@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { AudioPromptButton } from '../../components/AudioPromptButton';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
 import type { CurriculumActivity } from '../../lib/api';
-import { parseActivityPayload, pickLocalizedText } from './types';
+import { CommonWordsShowcase } from './CommonWordsShowcase';
+import { parseActivityPayload, pickLocalizedText, speakLocalizedText } from './types';
 
 const WorldCanvas = lazy(() => import('../world/WorldCanvas'));
 
@@ -16,7 +17,7 @@ interface Scene3DExploreActivityProps {
 /**
  * PHASE F — Renders an age-appropriate 3D exploration activity (`scene_3d_explore`)
  * where the 3D scene supports the educational objective (3D color garden, friendly farm,
- * 3D counting blocks, or 3D Arabic letters stage).
+ * 3D counting blocks, or 3D Arabic letters stage) with spoken Arabic audio and common words.
  */
 export function Scene3DExploreActivity({
   activity,
@@ -26,12 +27,27 @@ export function Scene3DExploreActivity({
   const { t, i18n } = useTranslation();
   const payload = parseActivityPayload(activity.interactionPayloadJson);
   const sceneObjects = payload.sceneObjects ?? [];
+  const wordExamples = payload.wordExamples ?? [];
 
   const [selectedNode, setSelectedNode] = useState<string>(
     activity.targetNodeName ?? sceneObjects[0]?.nodeName ?? '',
   );
 
   const modelUrl = activity.glbModelUrl ?? '/models/garden-colors.glb';
+
+  const handleSelectSceneNode = (nodeName: string) => {
+    setSelectedNode(nodeName);
+    const matched = sceneObjects.find((obj) => obj.nodeName === nodeName);
+    if (matched) {
+      const label = pickLocalizedText(
+        i18n.language,
+        matched.labelAr,
+        matched.labelFr,
+        matched.labelEn,
+      );
+      speakLocalizedText(label, i18n.language);
+    }
+  };
 
   return (
     <div className="activity-stage activity-stage--3d">
@@ -51,7 +67,7 @@ export function Scene3DExploreActivity({
             modelUrl={modelUrl}
             activeNodeName={selectedNode}
             focusPoint={activity.focusPoint}
-            onSelectNode={(nodeName) => setSelectedNode(nodeName)}
+            onSelectNode={handleSelectSceneNode}
           />
         </Suspense>
       </ErrorBoundary>
@@ -62,14 +78,19 @@ export function Scene3DExploreActivity({
           <div className="scene-object-cards">
             {sceneObjects.map((item) => {
               const isActive = item.nodeName === selectedNode;
-              const label = pickLocalizedText(i18n.language, item.labelAr, item.labelFr, item.labelEn);
+              const label = pickLocalizedText(
+                i18n.language,
+                item.labelAr,
+                item.labelFr,
+                item.labelEn,
+              );
               return (
                 <button
                   key={item.nodeName}
                   type="button"
                   className="scene-object-card"
                   aria-pressed={isActive}
-                  onClick={() => setSelectedNode(item.nodeName)}
+                  onClick={() => handleSelectSceneNode(item.nodeName)}
                 >
                   <span className="scene-object-card__emoji" aria-hidden="true">
                     {item.emoji}
@@ -81,6 +102,8 @@ export function Scene3DExploreActivity({
           </div>
         </div>
       )}
+
+      {wordExamples.length > 0 && <CommonWordsShowcase examples={wordExamples} />}
 
       <div className="activity-stage__footer">
         <span className="world-badge" dir="ltr">
