@@ -103,6 +103,16 @@ export function CurriculumWorkspace({
   const activeDomain =
     ageDetail.domains.find((d) => d.slug === selectedDomainSlug) ?? ageDetail.domains[0];
 
+  const allDomainLessons =
+    activeDomain?.collections.flatMap((col) =>
+      col.courses.flatMap((course) => course.lessons.map((l) => l.slug)),
+    ) ?? [];
+  const currentLessonIndex = allDomainLessons.indexOf(lesson.slug);
+  const nextLessonSlug =
+    currentLessonIndex >= 0 && currentLessonIndex + 1 < allDomainLessons.length
+      ? allDomainLessons[currentLessonIndex + 1]
+      : null;
+
   const handleDomainSelect = (domainSlug: string) => {
     setSelectedDomainSlug(domainSlug);
     const domain = ageDetail.domains.find((d) => d.slug === domainSlug);
@@ -157,6 +167,8 @@ export function CurriculumWorkspace({
             lesson={lesson}
             completedActivitySlugs={completedActivitySlugs}
             onCompleteActivity={onCompleteActivity}
+            nextLessonSlug={nextLessonSlug}
+            onSelectLesson={(slug) => setSelectedLessonSlug(slug)}
           />
         </div>
       </div>

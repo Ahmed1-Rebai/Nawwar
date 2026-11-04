@@ -5,6 +5,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.3.1] — 2026-11-04 (Expanded 13-Domain Preschool Courses, Interactive JS/React Learning Exercises & Child-Friendly Responsive UI)
+
+### Added
+- **Complete 13-Domain Preschool Course Catalog (`backend/src/Nawwar.Api/Features/Curriculum/CurriculumCatalog.cs` & `CurriculumInitializer.cs`)**:
+  - Expanded preschool curriculum to cover all **13 learning domains** (`20` courses, `20` lessons, and `24` interactive activities) across Ages 3, 4, and 5:
+    - **Age 3 (`5` domains, `6` courses, `8` activities)**: Added `الإِصْغَاءُ وَالكَلِمَاتُ اللَّطِيفَةُ` (*Arabic Listening & Kind Words*), `جِسْمِي وَمَشَاعِرِي` (*My Body & Basic Emotions*), and interactive star counting (`age3-count-stars-interactive`).
+    - **Age 4 (`4` domains, `5` courses, `6` activities)**: Added `الأَلْوَانُ، الأَشْكَالُ، وَالأَنْمَاطُ المَنْطِقِيَّةُ` (*Color Mixing, Shapes & Patterns*) and enriched counting (`age4-count-five-apples`) with interactive tap-to-count items.
+    - **Age 5 (`4` domains, `9` courses, `10` activities)**: Added `الطَّبِيعَةُ وَعَجَائِبُ السَّمَاءِ وَالمَاءِ` (*Wonders of Nature, Day, Night & Water*) and enriched the 6-course Arabic reading pathway (`مَسَارُ تَعَلُّمِ القِرَاءَةِ`) and early addition (`age5-math-add-3-plus-2`) with interactive studio and counting payloads.
+  - Updated `CurriculumInitializer` to automatically re-synchronize catalog updates while preserving `activity_completions`.
+- **Interactive JavaScript/React Course Learning Exercises (`frontend/src/features/activities/` & `curriculum/`)**:
+  - `LearningFlashcards.tsx`: Spoken discovery flashcards ("exercise of information") at the top of activities with `window.speechSynthesis` Arabic narration and star tracking.
+  - `CountingPlayground.tsx`: Interactive tap-to-count and visual addition (`3 + 2 = 5`) playground with spoken Arabic numerals (`١ · وَاحِدٌ`, `٢ · اِثْنَانِ`...).
+  - `LetterVowelStudio.tsx`: Interactive Arabic Letter Forms (`بـ / ـبـ / ـب`) and Short Vowels (`بَ / بِ / بُ`) spotlight studio with calligraphic preview and illustrated anchor words.
+  - `SyllableBuilderPlayground.tsx`: Interactive syllable-tile assembler with per-tile and full-word blended audio.
+  - Enhanced `LessonStageView.tsx` and `CurriculumWorkspace.tsx` with visual lesson progress bars, star counters, and **"النَّشَاطُ التَّالِي ⬅" / "الدَّرْسُ التَّالِي ⬅"** progression buttons.
+- **Warm, Child-Friendly, Fully Responsive Storybook Design (`frontend/src/styles/`)**:
+  - Redesigned `tokens.css`, `layout.css`, `age-worlds.css`, and `activities.css` with a bright, warm storybook color palette (`#fffaf0` / `#eef9ff` / `#fef3c7`), tactile 3D push-buttons, and responsive mobile/tablet/desktop breakpoints using CSS logical properties exclusively.
+- **Removed**:
+  - Deleted obsolete pre-realignment `.glb` assets (`lantern.glb`, `solar-system.glb`, `crystal-lattice.glb`) from `frontend/public/models/`.
+
+---
+
 ## [0.3.0] — 2026-11-03 (PHASES A–G: Preschool Ages 3, 4, and 5 Curriculum, Organized UI, Multi-Modal Activities & Playful 3D `.glb` Scenes)
 
 ### Added

@@ -45,9 +45,18 @@ public static class CurriculumInitializer
 
         await db.Database.EnsureCreatedAsync(cancellationToken);
 
-        if (!await db.AgeGroups.AnyAsync(cancellationToken))
+        var seedAgeGroups = CurriculumCatalog.CreateSeedAgeGroups();
+        var expectedActivityCount = seedAgeGroups
+            .SelectMany(a => a.Domains)
+            .SelectMany(d => d.Collections)
+            .SelectMany(c => c.Courses)
+            .SelectMany(cr => cr.Lessons)
+            .Sum(l => l.Activities.Count);
+
+        var currentActivityCount = await db.Activities.CountAsync(cancellationToken);
+        if (currentActivityCount != expectedActivityCount)
         {
-            var seedAgeGroups = CurriculumCatalog.CreateSeedAgeGroups();
+            await db.AgeGroups.ExecuteDeleteAsync(cancellationToken);
             db.AgeGroups.AddRange(seedAgeGroups);
             await db.SaveChangesAsync(cancellationToken);
         }

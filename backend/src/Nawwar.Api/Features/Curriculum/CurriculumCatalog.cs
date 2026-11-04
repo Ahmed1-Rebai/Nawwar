@@ -23,20 +23,28 @@ public static class CurriculumCatalog
         var colorsDomainId = Guid.Parse("20000000-0000-0000-0003-000000000001");
         var animalsDomainId = Guid.Parse("20000000-0000-0000-0003-000000000002");
         var numbersDomainId = Guid.Parse("20000000-0000-0000-0003-000000000003");
+        var listeningDomainId = Guid.Parse("20000000-0000-0000-0003-000000000004");
+        var bodyEmotionsDomainId = Guid.Parse("20000000-0000-0000-0003-000000000005");
 
         var gardenCollectionId = Guid.Parse("30000000-0000-0000-0003-000000000001");
         var farmCollectionId = Guid.Parse("30000000-0000-0000-0003-000000000002");
         var countCollectionId = Guid.Parse("30000000-0000-0000-0003-000000000003");
+        var listeningCollectionId = Guid.Parse("30000000-0000-0000-0003-000000000004");
+        var bodyCollectionId = Guid.Parse("30000000-0000-0000-0003-000000000005");
 
         var colorsCourseId = Guid.Parse("40000000-0000-0000-0003-000000000001");
         var shapesCourseId = Guid.Parse("40000000-0000-0000-0003-000000000002");
         var farmCourseId = Guid.Parse("40000000-0000-0000-0003-000000000003");
         var count1To3CourseId = Guid.Parse("40000000-0000-0000-0003-000000000004");
+        var kindWordsCourseId = Guid.Parse("40000000-0000-0000-0003-000000000005");
+        var bodyEmotionsCourseId = Guid.Parse("40000000-0000-0000-0003-000000000006");
 
         var colorsLessonId = Guid.Parse("50000000-0000-0000-0003-000000000001");
         var shapesLessonId = Guid.Parse("50000000-0000-0000-0003-000000000002");
         var farmLessonId = Guid.Parse("50000000-0000-0000-0003-000000000003");
         var count1To3LessonId = Guid.Parse("50000000-0000-0000-0003-000000000004");
+        var kindWordsLessonId = Guid.Parse("50000000-0000-0000-0003-000000000005");
+        var bodyEmotionsLessonId = Guid.Parse("50000000-0000-0000-0003-000000000006");
 
         return new AgeGroup
         {
@@ -463,6 +471,232 @@ public static class CurriculumCatalog
                                                     FocusZ = 0.0f,
                                                     InteractionPayloadJson = """{"sceneObjects":[{"nodeName":"Block_One","emoji":"1️⃣","labelAr":"وَاحِدٌ (١)","labelFr":"Un (1)","labelEn":"One (1)","color":"#ef4444"},{"nodeName":"Block_Two","emoji":"2️⃣","labelAr":"اِثْنَانِ (٢)","labelFr":"Deux (2)","labelEn":"Two (2)","color":"#facc15"},{"nodeName":"Block_Three","emoji":"3️⃣","labelAr":"ثَلَاثَةٌ (٣)","labelFr":"Trois (3)","labelEn":"Three (3)","color":"#3b82f6"}]}""",
                                                 },
+                                                new Activity
+                                                {
+                                                    LessonId = count1To3LessonId,
+                                                    Slug = "age3-count-stars-interactive",
+                                                    StepOrder = 2,
+                                                    ActivityType = "counting_interactive",
+                                                    ObjectiveCode = "L3-NM-01",
+                                                    TitleAr = "اِضْغَطْ عَلَى النُّجُومِ لِنَعُدَّهَا مَعاً: ١، ٢، ٣!",
+                                                    TitleFr = "Touche les étoiles pour compter : 1, 2, 3 !",
+                                                    TitleEn = "Tap the Stars to Count Together: 1, 2, 3!",
+                                                    PromptAr = "اِضْغَطْ عَلَى كُلِّ نَجْمَةٍ لِتُضِيءَ، ثُمَّ اخْتَرْ عَدَدَ النُّجُومِ:",
+                                                    PromptFr = "Touche chaque étoile pour l’allumer, puis choisis le nombre 3 :",
+                                                    PromptEn = "Tap each star to light it up, then choose number 3:",
+                                                    SpokenTextAr = "نَجْمَةٌ وَاحِدَةٌ، نَجْمَتَانِ، ثَلَاثُ نُجُومٍ لَامِعَةٍ!",
+                                                    SpokenTextFr = "Une étoile, deux étoiles, trois étoiles brillantes !",
+                                                    SpokenTextEn = "One star, two stars, three shining stars!",
+                                                    InteractionPayloadJson = """{"countingItems":{"emoji":"⭐","count":3,"itemNameAr":"نُجُومٌ لَامِعَةٌ","itemNameFr":"Étoiles","itemNameEn":"Shining Stars"},"correctOptionId":"count-3","options":[{"id":"count-1","emoji":"1️⃣","labelAr":"١ — نَجْمَةٌ وَاحِدَةٌ","labelFr":"1 — Une étoile","labelEn":"1 — One star","accentColor":"#38bdf8"},{"id":"count-2","emoji":"2️⃣","labelAr":"٢ — نَجْمَتَانِ","labelFr":"2 — Deux étoiles","labelEn":"2 — Two stars","accentColor":"#f59e0b"},{"id":"count-3","emoji":"3️⃣","labelAr":"٣ — ثَلَاثُ نُجُومٍ","labelFr":"3 — Trois étoiles","labelEn":"3 — Three stars","accentColor":"#22c55e"}]}""",
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                new LearningDomain
+                {
+                    Id = listeningDomainId,
+                    AgeGroupId = age3Id,
+                    Slug = "age-3-arabic-listening-and-sounds",
+                    DisplayOrder = 4,
+                    IconEmoji = "🎵",
+                    AccentColor = "#a855f7",
+                    TitleAr = "الإِصْغَاءُ وَالكَلِمَاتُ اللَّطِيفَةُ",
+                    TitleFr = "Écoute arabe et premiers mots doux",
+                    TitleEn = "Arabic Listening and Kind Words",
+                    SummaryAr = "نَسْتَمِعُ إِلَى أَصْوَاتِ الطَّبِيعَةِ وَنَتَعَلَّمُ الكَلِمَاتِ الطَّيِّبَةَ (مَرْحَباً، شُكْراً، بِسْمِ اللهِ).",
+                    SummaryFr = "Écouter les sons de la nature et apprendre les mots gentils en arabe.",
+                    SummaryEn = "Listen to nature sounds and learn kind everyday Arabic words.",
+                    Collections =
+                    [
+                        new CourseCollection
+                        {
+                            Id = listeningCollectionId,
+                            DomainId = listeningDomainId,
+                            Slug = "sounds-and-kind-words",
+                            DisplayOrder = 1,
+                            IsReadingPathway = false,
+                            TitleAr = "سِلْسِلَةُ أَصْوَاتٍ مِنْ حَوْلِي وَكَلِمَاتِي اللَّطِيفَةُ",
+                            TitleFr = "Collection Sons autour de moi et mots doux",
+                            TitleEn = "Sounds Around Me & Kind Words Collection",
+                            SummaryAr = "تَمْيِيزُ الأَصْوَاتِ المَأْلُوفَةِ وَالتَّحِيَّاتِ العَرَبِيَّةِ الجَمِيلَةِ.",
+                            SummaryFr = "Reconnaître les sons familiers et les salutations arabes.",
+                            SummaryEn = "Recognize familiar sounds and cheerful Arabic greetings.",
+                            Courses =
+                            [
+                                new Course
+                                {
+                                    Id = kindWordsCourseId,
+                                    CollectionId = listeningCollectionId,
+                                    Slug = "my-first-kind-words",
+                                    TargetAge = 3,
+                                    DisplayOrder = 1,
+                                    DifficultyLevel = 1,
+                                    IconEmoji = "💛",
+                                    TitleAr = "كَلِمَاتِي الأُولَى اللَّطِيفَةُ وَأَصْوَاتُ الطَّبِيعَةِ",
+                                    TitleFr = "Mes premiers mots gentils et sons de la nature",
+                                    TitleEn = "My First Kind Words and Nature Sounds",
+                                    DescriptionAr = "نَسْتَمِعُ إِلَى صَوْتِ المَطَرِ وَالعُصْفُورِ وَنَتَعَلَّمُ قَوْلَ: مَرْحَباً وَشُكْراً.",
+                                    DescriptionFr = "Écoutons la pluie et l’oiseau et apprenons à dire bonjour et merci.",
+                                    DescriptionEn = "Listen to rain and birdsong and learn to say Marhaban and Shukran.",
+                                    CompletionCriteriaAr = "الاسْتِمَاعُ إِلَى البطَاقَاتِ الصَّوْتِيَّةِ وَاخْتِيَارُ الصُّورَةِ المُنَاسِبَةِ.",
+                                    CompletionCriteriaFr = "Écouter les cartes sonores et choisir la bonne image.",
+                                    CompletionCriteriaEn = "Listen to the audio cards and pick the matching illustration.",
+                                    Objectives =
+                                    [
+                                        new LearningObjective
+                                        {
+                                            CourseId = kindWordsCourseId,
+                                            Code = "L3-AR-01",
+                                            DisplayOrder = 1,
+                                            DescriptionAr = "الاسْتِمَاعُ بِانْتِبَاهٍ إِلَى الكَلِمَاتِ العَرَبِيَّةِ المَأْلُوفَةِ وَأَصْوَاتِ الطَّبِيعَةِ.",
+                                            DescriptionFr = "Écouter attentivement les mots arabes familiers et les sons de la nature.",
+                                            DescriptionEn = "Listen attentively to familiar Arabic words and nature sounds.",
+                                        },
+                                    ],
+                                    Lessons =
+                                    [
+                                        new Lesson
+                                        {
+                                            Id = kindWordsLessonId,
+                                            CourseId = kindWordsCourseId,
+                                            Slug = "birdsong-rain-and-kind-greetings",
+                                            DisplayOrder = 1,
+                                            EstimatedMinutes = 3,
+                                            TitleAr = "صَوْتُ العُصْفُورِ وَالمَطَرِ وَكَلِمَةُ «شُكْراً»",
+                                            TitleFr = "Le chant de l’oiseau, la pluie et le mot « شُكْراً »",
+                                            TitleEn = "Birdsong, Rain, and Saying 'شُكْراً'",
+                                            SummaryAr = "اِكْتَشِفْ أَصْوَاتَ الطَّبِيعَةِ وَالكَلِمَاتِ اللَّطِيفَةَ بِالصَّوْتِ وَالصُّورَةِ.",
+                                            SummaryFr = "Découvre les sons de la nature et les mots gentils en audio et en images.",
+                                            SummaryEn = "Explore nature sounds and kind Arabic words with audio and pictures.",
+                                            Activities =
+                                            [
+                                                new Activity
+                                                {
+                                                    LessonId = kindWordsLessonId,
+                                                    Slug = "age3-listening-bird-sound",
+                                                    StepOrder = 1,
+                                                    ActivityType = "audio_listen_pick",
+                                                    ObjectiveCode = "L3-AR-01",
+                                                    TitleAr = "مَنْ يُغَرِّدُ فَوْقَ الشَّجَرَةِ؟ (زَقْزَقَةُ العُصْفُورِ 🐦)",
+                                                    TitleFr = "Qui chante sur l’arbre ? (L’oiseau 🐦)",
+                                                    TitleEn = "Who Sings in the Tree? (The Little Bird 🐦)",
+                                                    PromptAr = "اِسْتَمِعْ إِلَى بِطَاقَاتِ التَّعَلُّمِ، ثُمَّ اخْتَرِ العُصْفُورَ الَّذِي يُغَرِّدُ فَوْقَ الغُصْنِ:",
+                                                    PromptFr = "Écoute les cartes, puis choisis le petit oiseau qui chante :",
+                                                    PromptEn = "Listen to the learning cards, then pick the singing bird:",
+                                                    SpokenTextAr = "العُصْفُورُ الصَّغِيرُ يُغَرِّدُ فَوْقَ الشَّجَرَةِ: تْشِيب تْشِيب! وَالمَطَرُ يَنْزِلُ مِنَ الغَيْمَةِ!",
+                                                    SpokenTextFr = "Le petit oiseau chante sur l’arbre, et la pluie tombe du nuage !",
+                                                    SpokenTextEn = "The little bird sings in the tree, and rain falls from the cloud!",
+                                                    InteractionPayloadJson = """{"learningCards":[{"emoji":"🐦","titleAr":"عُصْفُورٌ يُغَرِّدُ","titleFr":"Oiseau qui chante","titleEn":"Singing Bird","factAr":"العُصْفُورُ يَطِيرُ فِي السَّمَاءِ وَيُغَرِّدُ بِصَوْتٍ جَمِيلٍ.","factFr":"L’oiseau vole et chante une jolie mélodie.","factEn":"The bird flies in the sky and sings a cheerful song.","accentColor":"#38bdf8"},{"emoji":"🌧️","titleAr":"مَطَرٌ لَطِيفٌ","titleFr":"Pluie douce","titleEn":"Gentle Rain","factAr":"المَطَرُ يَسْقِي الأَزْهَارَ وَالأَشْجَارَ لِتَكْبُرَ.","factFr":"La pluie arrose les fleurs et les arbres.","factEn":"Rain waters the flowers and trees so they grow.","accentColor":"#60a5fa"},{"emoji":"💐","titleAr":"شُكْراً لَكَ!","titleFr":"Merci (شُكْراً)","titleEn":"Thank You (شُكْراً)","factAr":"نَقُولُ «شُكْراً» بِابْتِسَامَةٍ لِكُلِّ مَنْ يُسَاعِدُنَا.","factFr":"Nous disons « شُكْراً » avec un grand sourire.","factEn":"We say 'شُكْراً (Shukran)' with a warm smile.","accentColor":"#f43f5e"}],"correctOptionId":"sound-bird","options":[{"id":"sound-bird","emoji":"🐦","labelAr":"العُصْفُورُ المُغَرِّدُ","labelFr":"L’oiseau qui chante","labelEn":"The Singing Bird","accentColor":"#38bdf8"},{"id":"sound-rain","emoji":"🌧️","labelAr":"غَيْمَةُ المَطَرِ","labelFr":"Le nuage de pluie","labelEn":"The Rain Cloud","accentColor":"#60a5fa"},{"id":"sound-bell","emoji":"🔔","labelAr":"جَرَسُ البَيْتِ","labelFr":"La cloche","labelEn":"The Doorbell","accentColor":"#f59e0b"}]}""",
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                new LearningDomain
+                {
+                    Id = bodyEmotionsDomainId,
+                    AgeGroupId = age3Id,
+                    Slug = "age-3-my-body-and-emotions",
+                    DisplayOrder = 5,
+                    IconEmoji = "😊",
+                    AccentColor = "#f43f5e",
+                    TitleAr = "جِسْمِي وَمَشَاعِرِي",
+                    TitleFr = "Mon corps et mes émotions",
+                    TitleEn = "My Body and Basic Emotions",
+                    SummaryAr = "أَتَعَرَّفُ عَلَى عَيْنِي وَيَدِي وَأُمَيِّزُ الوَجْهَ السَّعِيدَ وَالوَجْهَ المُتَفَاجِئَ.",
+                    SummaryFr = "Découvrir les parties du corps et reconnaître les émotions de base.",
+                    SummaryEn = "Recognize body parts and friendly facial emotions.",
+                    Collections =
+                    [
+                        new CourseCollection
+                        {
+                            Id = bodyCollectionId,
+                            DomainId = bodyEmotionsDomainId,
+                            Slug = "me-and-my-feelings",
+                            DisplayOrder = 1,
+                            IsReadingPathway = false,
+                            TitleAr = "سِلْسِلَةُ أَنَا وَمَشَاعِرِي الجَمِيلَةُ",
+                            TitleFr = "Collection Moi et mes émotions",
+                            TitleEn = "Me and My Feelings Collection",
+                            SummaryAr = "نُشِيرُ إِلَى أَجْزَاءِ الجِسْمِ وَنُعَبِّرُ عَنْ مَشَاعِرِنَا بِفَرَحٍ.",
+                            SummaryFr = "Montrer les parties du corps et exprimer ses émotions.",
+                            SummaryEn = "Point to body parts and express happy feelings.",
+                            Courses =
+                            [
+                                new Course
+                                {
+                                    Id = bodyEmotionsCourseId,
+                                    CollectionId = bodyCollectionId,
+                                    Slug = "my-body-and-emotions",
+                                    TargetAge = 3,
+                                    DisplayOrder = 1,
+                                    DifficultyLevel = 1,
+                                    IconEmoji = "🖐️",
+                                    TitleAr = "أَجْزَاءُ جِسْمِي وَكَيْفَ أَشْعُرُ اليَوْمَ؟",
+                                    TitleFr = "Les parties de mon corps et mes émotions",
+                                    TitleEn = "My Body Parts and How I Feel Today",
+                                    DescriptionAr = "نَتَعَرَّفُ عَلَى العَيْنِ وَاليَدِ وَالقَدَمِ، وَنُمَيِّزُ الابْتِسَامَةَ السَّعِيدَةَ.",
+                                    DescriptionFr = "Découvrons les yeux, la main et le sourire joyeux.",
+                                    DescriptionEn = "Discover our eyes, hands, and happy smiling faces.",
+                                    CompletionCriteriaAr = "التَّعَرُّفُ عَلَى أَجْزَاءِ الجِسْمِ وَالوَجْهِ السَّعِيدِ.",
+                                    CompletionCriteriaFr = "Reconnaître les parties du corps et le visage joyeux.",
+                                    CompletionCriteriaEn = "Recognize body parts and the happy face.",
+                                    Objectives =
+                                    [
+                                        new LearningObjective
+                                        {
+                                            CourseId = bodyEmotionsCourseId,
+                                            Code = "L3-BD-01",
+                                            DisplayOrder = 1,
+                                            DescriptionAr = "الإِشَارَةُ إِلَى أَجْزَاءِ الجِسْمِ الظَّاهِرَةِ وَتَمْيِيزُ المَشَاعِرِ الأَسَاسِيَّةِ.",
+                                            DescriptionFr = "Nommer les parties du corps et identifier les émotions simples.",
+                                            DescriptionEn = "Point to visible body parts and identify basic emotions.",
+                                        },
+                                    ],
+                                    Lessons =
+                                    [
+                                        new Lesson
+                                        {
+                                            Id = bodyEmotionsLessonId,
+                                            CourseId = bodyEmotionsCourseId,
+                                            Slug = "my-eyes-my-hands-and-happy-smile",
+                                            DisplayOrder = 1,
+                                            EstimatedMinutes = 3,
+                                            TitleAr = "عَيْنِي، يَدِي، وَابْتِسَامَتِي السَّعِيدَةُ",
+                                            TitleFr = "Mes yeux, ma main et mon grand sourire",
+                                            TitleEn = "My Eyes, My Hand, and My Happy Smile",
+                                            SummaryAr = "نَتَعَلَّمُ أَسْمَاءَ أَجْزَاءِ جِسْمِنَا وَكَيْفَ نَبْتَسِمُ بِسَعَادَةٍ.",
+                                            SummaryFr = "Apprenons les parties du corps et le sourire joyeux.",
+                                            SummaryEn = "Learn body part names and identify a cheerful smile.",
+                                            Activities =
+                                            [
+                                                new Activity
+                                                {
+                                                    LessonId = bodyEmotionsLessonId,
+                                                    Slug = "age3-body-happy-emotion",
+                                                    StepOrder = 1,
+                                                    ActivityType = "visual_match_sort",
+                                                    ObjectiveCode = "L3-BD-01",
+                                                    TitleAr = "أَيُّ وَجْهٍ يَشْعُرُ بِالسَّعَادَةِ وَالفَرَحِ (😊)؟",
+                                                    TitleFr = "Quel visage est joyeux et souriant (😊) ?",
+                                                    TitleEn = "Which Face Feels Happy and Joyful (😊)?",
+                                                    PromptAr = "اِسْتَكْشِفِ البِطَاقَاتِ ثُمَّ اخْتَرِ الوَجْهَ السَّعِيدَ المُبْتَسِمَ:",
+                                                    PromptFr = "Explore les cartes puis choisis le visage heureux :",
+                                                    PromptEn = "Explore the cards, then choose the happy smiling face:",
+                                                    SpokenTextAr = "أَنَا سَعِيدٌ وَأَبْتَسِمُ! وَأُلَوِّحُ بِيَدِي الجَمِيلَةِ، وَأَنْظُرُ بِعَيْنِي!",
+                                                    SpokenTextFr = "Je suis heureux et je souris ! Je salue avec ma main.",
+                                                    SpokenTextEn = "I am happy and smiling! I wave with my hand and see with my eyes.",
+                                                    InteractionPayloadJson = """{"learningCards":[{"emoji":"👀","titleAr":"عَيْنِي أَرَى بِهَا","titleFr":"Mes yeux","titleEn":"My Eyes","factAr":"أَنْظُرُ بِعَيْنِي إِلَى الأَلْوَانِ وَالأَزْهَارِ الجَمِيلَةِ.","factFr":"Je vois les couleurs et les fleurs avec mes yeux.","factEn":"I look at colorful flowers with my eyes.","accentColor":"#38bdf8"},{"emoji":"🖐️","titleAr":"يَدِي أُلَوِّحُ بِهَا","titleFr":"Ma main","titleEn":"My Hand","factAr":"أَرْسُمُ وَأُلَوِّحُ لِأَصْدِقَائِي بِيَدِي.","factFr":"Je dessine et je salue mes amis avec ma main.","factEn":"I draw and wave to my friends with my hand.","accentColor":"#f59e0b"},{"emoji":"😊","titleAr":"وَجْهٌ سَعِيدٌ","titleFr":"Visage joyeux","titleEn":"Happy Face","factAr":"عِنْدَمَا أَفْرَحُ تَظْهَرُ ابْتِسَامَةٌ جَمِيلَةٌ عَلَى وَجْهِي!","factFr":"Quand je suis content, je fais un grand sourire !","factEn":"When I feel joyful, a bright smile appears on my face!","accentColor":"#22c55e"}],"correctOptionId":"emotion-happy","options":[{"id":"emotion-happy","emoji":"😊","labelAr":"سَعِيدٌ وَمُبْتَسِمٌ","labelFr":"Joyeux et souriant","labelEn":"Happy and Smiling","accentColor":"#22c55e"},{"id":"emotion-surprised","emoji":"😮","labelAr":"مُتَفَاجِئٌ","labelFr":"Surpris","labelEn":"Surprised","accentColor":"#f59e0b"},{"id":"emotion-sleepy","emoji":"😴","labelAr":"نَعْسَانُ وَهَادِئٌ","labelFr":"Endormi","labelEn":"Sleepy and Calm","accentColor":"#60a5fa"}]}""",
+                                                },
                                             ],
                                         },
                                     ],
@@ -481,20 +715,24 @@ public static class CurriculumCatalog
         var alphabetDomainId = Guid.Parse("20000000-0000-0000-0004-000000000001");
         var countingDomainId = Guid.Parse("20000000-0000-0000-0004-000000000002");
         var natureLogicDomainId = Guid.Parse("20000000-0000-0000-0004-000000000003");
+        var patternsDomainId = Guid.Parse("20000000-0000-0000-0004-000000000004");
 
         var alphabetCollectionId = Guid.Parse("30000000-0000-0000-0004-000000000001");
         var countingCollectionId = Guid.Parse("30000000-0000-0000-0004-000000000002");
         var natureCollectionId = Guid.Parse("30000000-0000-0000-0004-000000000003");
+        var patternsCollectionId = Guid.Parse("30000000-0000-0000-0004-000000000004");
 
         var lettersGroup1CourseId = Guid.Parse("40000000-0000-0000-0004-000000000001");
         var letterSoundsCourseId = Guid.Parse("40000000-0000-0000-0004-000000000002");
         var numbers1To10CourseId = Guid.Parse("40000000-0000-0000-0004-000000000003");
         var habitatsSeasonsCourseId = Guid.Parse("40000000-0000-0000-0004-000000000004");
+        var patternsCourseId = Guid.Parse("40000000-0000-0000-0004-000000000005");
 
         var alifBaTaLessonId = Guid.Parse("50000000-0000-0000-0004-000000000001");
         var letterSoundsLessonId = Guid.Parse("50000000-0000-0000-0004-000000000002");
         var countTo10LessonId = Guid.Parse("50000000-0000-0000-0004-000000000003");
         var habitatsLessonId = Guid.Parse("50000000-0000-0000-0004-000000000004");
+        var patternsLessonId = Guid.Parse("50000000-0000-0000-0004-000000000005");
 
         return new AgeGroup
         {
@@ -805,7 +1043,7 @@ public static class CurriculumCatalog
                                                     SpokenTextAr = "وَاحِدٌ، اِثْنَانِ، ثَلَاثَةٌ، أَرْبَعَةٌ، خَمْسَةٌ! خَمْسُ تُفَّاحَاتٍ!",
                                                     SpokenTextFr = "Un, deux, trois, quatre, cinq ! Cinq pommes !",
                                                     SpokenTextEn = "One, two, three, four, five! Five apples!",
-                                                    InteractionPayloadJson = """{"correctOptionId":"num-5","options":[{"id":"num-3","emoji":"3️⃣","labelAr":"٣ — ثَلَاثَةٌ","labelFr":"3 — Trois","labelEn":"3 — Three","accentColor":"#38bdf8"},{"id":"num-5","emoji":"5️⃣","labelAr":"٥ — خَمْسَةٌ","labelFr":"5 — Cinq","labelEn":"5 — Five","accentColor":"#4cc38a"},{"id":"num-8","emoji":"8️⃣","labelAr":"٨ — ثَمَانِيَةٌ","labelFr":"8 — Huit","labelEn":"8 — Eight","accentColor":"#f59e0b"}]}""",
+                                                    InteractionPayloadJson = """{"countingItems":{"emoji":"🍎","count":5,"itemNameAr":"تُفَّاحَاتٍ حَمْرَاءَ","itemNameFr":"Pommes rouges","itemNameEn":"Red Apples"},"correctOptionId":"num-5","options":[{"id":"num-3","emoji":"3️⃣","labelAr":"٣ — ثَلَاثَةٌ","labelFr":"3 — Trois","labelEn":"3 — Three","accentColor":"#38bdf8"},{"id":"num-5","emoji":"5️⃣","labelAr":"٥ — خَمْسَةٌ","labelFr":"5 — Cinq","labelEn":"5 — Five","accentColor":"#4cc38a"},{"id":"num-8","emoji":"8️⃣","labelAr":"٨ — ثَمَانِيَةٌ","labelFr":"8 — Huit","labelEn":"8 — Eight","accentColor":"#f59e0b"}]}""",
                                                 },
                                             ],
                                         },
@@ -919,6 +1157,110 @@ public static class CurriculumCatalog
                         },
                     ],
                 },
+                new LearningDomain
+                {
+                    Id = patternsDomainId,
+                    AgeGroupId = age4Id,
+                    Slug = "age-4-colors-shapes-and-patterns",
+                    DisplayOrder = 4,
+                    IconEmoji = "🎨",
+                    AccentColor = "#a855f7",
+                    TitleAr = "الأَلْوَانُ، الأَشْكَالُ، وَالأَنْمَاطُ المَنْطِقِيَّةُ",
+                    TitleFr = "Mélange de couleurs, formes et suites logiques",
+                    TitleEn = "Color Mixing, Shapes, and Visual Patterns",
+                    SummaryAr = "نَمْزِجُ الأَلْوَانَ لِنَكْتَشِفَ أَلْوَاناً جَدِيدَةً وَنُكْمِلُ الأَنْمَاطَ المُتَكَرِّرَةَ.",
+                    SummaryFr = "Mélanger les couleurs et compléter des suites visuelles.",
+                    SummaryEn = "Mix primary colors to discover new colors and complete visual patterns.",
+                    Collections =
+                    [
+                        new CourseCollection
+                        {
+                            Id = patternsCollectionId,
+                            DomainId = patternsDomainId,
+                            Slug = "patterns-and-visual-logic",
+                            DisplayOrder = 1,
+                            IsReadingPathway = false,
+                            TitleAr = "سِلْسِلَةُ الأَنْمَاطِ وَالذَّكَاءِ البَصَرِيِّ",
+                            TitleFr = "Collection Motifs et logique visuelle",
+                            TitleEn = "Patterns and Visual Logic Collection",
+                            SummaryAr = "مَزْجُ الأَلْوَانِ الأَسَاسِيَّةِ وَإِكْمَالُ الأَنْمَاطِ المُتَنَاوِبَةِ.",
+                            SummaryFr = "Mélange de couleurs et suites logiques alternées.",
+                            SummaryEn = "Primary color mixing and alternating visual patterns.",
+                            Courses =
+                            [
+                                new Course
+                                {
+                                    Id = patternsCourseId,
+                                    CollectionId = patternsCollectionId,
+                                    Slug = "color-mixing-and-patterns",
+                                    TargetAge = 4,
+                                    DisplayOrder = 1,
+                                    DifficultyLevel = 2,
+                                    IconEmoji = "🌈",
+                                    TitleAr = "مَزْجُ الأَلْوَانِ وَالأَنْمَاطُ المُتَكَرِّرَةُ",
+                                    TitleFr = "Mélange de couleurs et suites répétitives",
+                                    TitleEn = "Color Mixing and Repeating Patterns",
+                                    DescriptionAr = "نَكْتَشِفُ مَاذَا يَحْدُثُ عِنْدَ مَزْجِ الأَصْفَرِ وَالأَزْرَقِ، وَنُكْمِلُ نَمَطَ الأَشْكَالِ.",
+                                    DescriptionFr = "Découvrons ce que donnent le jaune et le bleu mélangés.",
+                                    DescriptionEn = "Discover what happens when yellow and blue mix together.",
+                                    CompletionCriteriaAr = "مَعْرِفَةُ نَاتِجِ مَزْجِ الأَلْوَانِ وَإِكْمَالُ النَّمَطِ البَصَرِيِّ.",
+                                    CompletionCriteriaFr = "Connaître le résultat du mélange des couleurs.",
+                                    CompletionCriteriaEn = "Identify the result of mixing primary colors.",
+                                    Objectives =
+                                    [
+                                        new LearningObjective
+                                        {
+                                            CourseId = patternsCourseId,
+                                            Code = "L4-CL-01",
+                                            DisplayOrder = 1,
+                                            DescriptionAr = "مُلَاحَظَةُ مَزْجِ الأَلْوَانِ البَسِيطَةِ وَإِكْمَالُ الأَنْمَاطِ البَصَرِيَّةِ.",
+                                            DescriptionFr = "Observer le mélange simple des couleurs et compléter un motif.",
+                                            DescriptionEn = "Observe simple color mixing and complete visual patterns.",
+                                        },
+                                    ],
+                                    Lessons =
+                                    [
+                                        new Lesson
+                                        {
+                                            Id = patternsLessonId,
+                                            CourseId = patternsCourseId,
+                                            Slug = "yellow-plus-blue-makes-green",
+                                            DisplayOrder = 1,
+                                            EstimatedMinutes = 4,
+                                            TitleAr = "الأَصْفَرُ (💛) + الأَزْرَقُ (💙) = الأَخْضَرُ (💚)",
+                                            TitleFr = "Jaune (💛) + Bleu (💙) = Vert (💚)",
+                                            TitleEn = "Yellow (💛) + Blue (💙) = Green (💚)",
+                                            SummaryAr = "اِكْتَشِفْ سِحْرَ مَزْجِ الأَلْوَانِ مَعَ بِطَاقَاتِ التَّعَلُّمِ!",
+                                            SummaryFr = "Découvre la magie du mélange des couleurs !",
+                                            SummaryEn = "Discover the magic of mixing colors with interactive cards!",
+                                            Activities =
+                                            [
+                                                new Activity
+                                                {
+                                                    LessonId = patternsLessonId,
+                                                    Slug = "age4-color-mixing-green",
+                                                    StepOrder = 1,
+                                                    ActivityType = "visual_match_sort",
+                                                    ObjectiveCode = "L4-CL-01",
+                                                    TitleAr = "مَا اللَّوْنُ النَّاتِجُ عِنْدَ مَزْجِ الأَصْفَرِ (💛) وَالأَزْرَقِ (💙)؟",
+                                                    TitleFr = "Quelle couleur obtient-on en mélangeant le jaune (💛) et le bleu (💙) ?",
+                                                    TitleEn = "What Color Do We Get When We Mix Yellow (💛) and Blue (💙)?",
+                                                    PromptAr = "عِنْدَمَا نَمْزِجُ اللَّوْنَ الأَصْفَرَ مَعَ اللَّوْنِ الأَزْرَقِ يَظْهَرُ لَوْنُ أَوْرَاقِ الشَّجَرِ! اِخْتَرِ اللَّوْنَ الصَّحِيحَ:",
+                                                    PromptFr = "Quand on mélange le jaune et le bleu, on obtient la couleur des feuilles ! Choisis-la :",
+                                                    PromptEn = "When we mix yellow and blue, we get the color of tree leaves! Pick it:",
+                                                    SpokenTextAr = "اللَّوْنُ الأَصْفَرُ مَعَ اللَّوْنِ الأَزْرَقِ يُعْطِينَا اللَّوْنَ الأَخْضَرَ الجَمِيلَ!",
+                                                    SpokenTextFr = "Le jaune mélangé au bleu donne une belle couleur verte !",
+                                                    SpokenTextEn = "Yellow mixed with blue gives us a bright green color!",
+                                                    InteractionPayloadJson = """{"learningCards":[{"emoji":"💛","titleAr":"اللَّوْنُ الأَصْفَرُ","titleFr":"Jaune","titleEn":"Yellow","factAr":"كَالشَّمْسِ المُشْرِقَةِ وَالمَوْزِ اللَّذِيذِ.","factFr":"Comme le soleil brillant.","factEn":"Bright like the sun and bananas.","accentColor":"#facc15"},{"emoji":"💙","titleAr":"اللَّوْنُ الأَزْرَقُ","titleFr":"Bleu","titleEn":"Blue","factAr":"كَالسَّمَاءِ الصَّافِيَةِ وَمِيَاهِ البَحْرِ.","factFr":"Comme le ciel et la mer.","factEn":"Clear like the sky and ocean.","accentColor":"#3b82f6"},{"emoji":"💚","titleAr":"أَصْفَرُ + أَزْرَقُ = أَخْضَرُ","titleFr":"Jaune + Bleu = Vert","titleEn":"Yellow + Blue = Green","factAr":"يَظْهَرُ اللَّوْنُ الأَخْضَرُ كَأَوْرَاقِ الأَشْجَارِ وَالعُشْبِ!","factFr":"Le vert apparaît comme l’herbe et les feuilles !","factEn":"Green appears just like grass and leaves!","accentColor":"#22c55e"}],"correctOptionId":"mix-green","options":[{"id":"mix-green","emoji":"💚","labelAr":"الأَخْضَرُ (أَصْفَرُ + أَزْرَقُ)","labelFr":"Le vert (Jaune + Bleu)","labelEn":"Green (Yellow + Blue)","accentColor":"#22c55e"},{"id":"mix-purple","emoji":"💜","labelAr":"البَنَفْسَجِيُّ","labelFr":"Le violet","labelEn":"Purple","accentColor":"#a855f7"},{"id":"mix-orange","emoji":"🧡","labelAr":"البُرْتُقَالِيُّ","labelFr":"L’orange","labelEn":"Orange","accentColor":"#f97316"}]}""",
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
             ],
         };
     }
@@ -929,10 +1271,12 @@ public static class CurriculumCatalog
         var arabicDomainId = Guid.Parse("20000000-0000-0000-0005-000000000001");
         var mathDomainId = Guid.Parse("20000000-0000-0000-0005-000000000002");
         var logicNatureDomainId = Guid.Parse("20000000-0000-0000-0005-000000000003");
+        var scienceNatureDomainId = Guid.Parse("20000000-0000-0000-0005-000000000004");
 
         var readingPathwayCollectionId = Guid.Parse("30000000-0000-0000-0005-000000000001");
         var mathCollectionId = Guid.Parse("30000000-0000-0000-0005-000000000002");
         var logicCollectionId = Guid.Parse("30000000-0000-0000-0005-000000000003");
+        var scienceCollectionId = Guid.Parse("30000000-0000-0000-0005-000000000004");
 
         // The 6 sequential courses in Age 5's dedicated reading pathway (مَسَارُ تَعَلُّمِ القِرَاءَةِ)
         var c1LetterDiscoveryId = Guid.Parse("40000000-0000-0000-0005-000000000001");
@@ -944,6 +1288,7 @@ public static class CurriculumCatalog
 
         var mathAdditionCourseId = Guid.Parse("40000000-0000-0000-0005-000000000007");
         var plantLogicCourseId = Guid.Parse("40000000-0000-0000-0005-000000000008");
+        var dayNightCourseId = Guid.Parse("40000000-0000-0000-0005-000000000009");
 
         var l1LetterDiscoveryId = Guid.Parse("50000000-0000-0000-0005-000000000001");
         var l2LetterFormsId = Guid.Parse("50000000-0000-0000-0005-000000000002");
@@ -953,6 +1298,7 @@ public static class CurriculumCatalog
         var l6SentenceReadingId = Guid.Parse("50000000-0000-0000-0005-000000000006");
         var l7AdditionId = Guid.Parse("50000000-0000-0000-0005-000000000007");
         var l8PlantGrowthId = Guid.Parse("50000000-0000-0000-0005-000000000008");
+        var l9DayNightId = Guid.Parse("50000000-0000-0000-0005-000000000009");
 
         return new AgeGroup
         {
@@ -1136,7 +1482,7 @@ public static class CurriculumCatalog
                                                     SpokenTextAr = "فِي أَوَّلِ الكَلِمَةِ نَكْتُبُ: بـ ، كَمَا فِي كَلِمَةِ: بَيْتٌ!",
                                                     SpokenTextFr = "Au début du mot, on écrit بـ comme dans Baytun (maison) !",
                                                     SpokenTextEn = "At the beginning of a word we write بـ, as in Baytun!",
-                                                    InteractionPayloadJson = """{"correctOptionId":"form-initial","options":[{"id":"form-initial","emoji":"🏠","labelAr":"بـ  (فِي أَوَّلِ الكَلِمَةِ: بَيْتٌ)","labelFr":"بـ  (Début du mot : بَيْتٌ)","labelEn":"بـ  (Initial form: بَيْتٌ)","accentColor":"#4cc38a"},{"id":"form-medial","emoji":"🍞","labelAr":"ـبـ (فِي وَسَطِ الكَلِمَةِ: خُبْزٌ)","labelFr":"ـبـ (Milieu du mot : خُبْزٌ)","labelEn":"ـبـ (Medial form: خُبْزٌ)","accentColor":"#38bdf8"},{"id":"form-final","emoji":"📖","labelAr":"ـب  (فِي آخِرِ الكَلِمَةِ: كِتَابٌ)","labelFr":"ـب  (Fin du mot : كِتَابٌ)","labelEn":"ـب  (Final form: كِتَابٌ)","accentColor":"#f4c76b"}]}""",
+                                                    InteractionPayloadJson = """{"letterStudio":{"baseLetter":"ب","forms":[{"form":"بـ","positionAr":"فِي أَوَّلِ الكَلِمَةِ","positionFr":"Début du mot","positionEn":"Initial Form","wordAr":"بَيْتٌ","wordFr":"بَيْتٌ (Maison)","wordEn":"بَيْتٌ (House)","emoji":"🏠","color":"#22c55e"},{"form":"ـبـ","positionAr":"فِي وَسَطِ الكَلِمَةِ","positionFr":"Milieu du mot","positionEn":"Medial Form","wordAr":"خُبْزٌ","wordFr":"خُبْزٌ (Pain)","wordEn":"خُبْزٌ (Bread)","emoji":"🍞","color":"#38bdf8"},{"form":"ـب","positionAr":"فِي آخِرِ الكَلِمَةِ","positionFr":"Fin du mot","positionEn":"Final Form","wordAr":"كِتَابٌ","wordFr":"كِتَابٌ (Livre)","wordEn":"كِتَابٌ (Book)","emoji":"📖","color":"#f59e0b"}]},"correctOptionId":"form-initial","options":[{"id":"form-initial","emoji":"🏠","labelAr":"بـ  (فِي أَوَّلِ الكَلِمَةِ: بَيْتٌ)","labelFr":"بـ  (Début du mot : بَيْتٌ)","labelEn":"بـ  (Initial form: بَيْتٌ)","accentColor":"#4cc38a"},{"id":"form-medial","emoji":"🍞","labelAr":"ـبـ (فِي وَسَطِ الكَلِمَةِ: خُبْزٌ)","labelFr":"ـبـ (Milieu du mot : خُبْزٌ)","labelEn":"ـبـ (Medial form: خُبْزٌ)","accentColor":"#38bdf8"},{"id":"form-final","emoji":"📖","labelAr":"ـب  (فِي آخِرِ الكَلِمَةِ: كِتَابٌ)","labelFr":"ـب  (Fin du mot : كِتَابٌ)","labelEn":"ـب  (Final form: كِتَابٌ)","accentColor":"#f4c76b"}]}""",
                                                 },
                                             ],
                                         },
@@ -1228,7 +1574,7 @@ public static class CurriculumCatalog
                                                     SpokenTextAr = "بُ! بَاءٌ مَعَ الضَّمَّةِ: بُ — بُرْتُقَالَةٌ!",
                                                     SpokenTextFr = "Bu ! Baa avec Damma : Bu — Burtuqala !",
                                                     SpokenTextEn = "Bu! Baa with Damma: Bu — Burtuqala!",
-                                                    InteractionPayloadJson = """{"correctOptionId":"vowel-bu","options":[{"id":"vowel-ba","emoji":"🦆","labelAr":"بَ — فَتْحَةٌ (بَطَّةٌ)","labelFr":"بَ — الفتحة (بَطَّةٌ)","labelEn":"بَ — Fatha (بَطَّةٌ)","accentColor":"#f4c76b"},{"id":"vowel-bi","emoji":"🍉","labelAr":"بِ — كَسْرَةٌ (بِطِّيخٌ)","labelFr":"بِ — الكسرة (بِطِّيخٌ)","labelEn":"بِ — Kasra (بِطِّيخٌ)","accentColor":"#4cc38a"},{"id":"vowel-bu","emoji":"🍊","labelAr":"بُ — ضَمَّةٌ (بُرْتُقَالَةٌ)","labelFr":"بُ — الضمة (بُرْتُقَالَةٌ)","labelEn":"بُ — Damma (بُرْتُقَالَةٌ)","accentColor":"#fb923c"}]}""",
+                                                    InteractionPayloadJson = """{"letterStudio":{"baseLetter":"ب","forms":[{"form":"بَ","positionAr":"الفَتْحَةُ (ـَ)","positionFr":"Al-Fatha (ـَ)","positionEn":"Fatha (ـَ)","wordAr":"بَطَّةٌ","wordFr":"بَطَّةٌ (Canard)","wordEn":"بَطَّةٌ (Duck)","emoji":"🦆","color":"#f59e0b"},{"form":"بِ","positionAr":"الكَسْرَةُ (ـِ)","positionFr":"Al-Kasra (ـِ)","positionEn":"Kasra (ـِ)","wordAr":"بِطِّيخٌ","wordFr":"بِطِّيخٌ (Pastèque)","wordEn":"بِطِّيخٌ (Watermelon)","emoji":"🍉","color":"#22c55e"},{"form":"بُ","positionAr":"الضَّمَّةُ (ـُ)","positionFr":"Ad-Damma (ـُ)","positionEn":"Damma (ـُ)","wordAr":"بُرْتُقَالَةٌ","wordFr":"بُرْتُقَالَةٌ (Orange)","wordEn":"بُرْتُقَالَةٌ (Orange)","emoji":"🍊","color":"#f97316"}]},"correctOptionId":"vowel-bu","options":[{"id":"vowel-ba","emoji":"🦆","labelAr":"بَ — فَتْحَةٌ (بَطَّةٌ)","labelFr":"بَ — الفتحة (بَطَّةٌ)","labelEn":"بَ — Fatha (بَطَّةٌ)","accentColor":"#f4c76b"},{"id":"vowel-bi","emoji":"🍉","labelAr":"بِ — كَسْرَةٌ (بِطِّيخٌ)","labelFr":"بِ — الكسرة (بِطِّيخٌ)","labelEn":"بِ — Kasra (بِطِّيخٌ)","accentColor":"#4cc38a"},{"id":"vowel-bu","emoji":"🍊","labelAr":"بُ — ضَمَّةٌ (بُرْتُقَالَةٌ)","labelFr":"بُ — الضمة (بُرْتُقَالَةٌ)","labelEn":"بُ — Damma (بُرْتُقَالَةٌ)","accentColor":"#fb923c"}]}""",
                                                 },
                                             ],
                                         },
@@ -1539,7 +1885,7 @@ public static class CurriculumCatalog
                                                     SpokenTextAr = "ثَلَاثُ تُفَّاحَاتٍ زَائِدُ تُفَّاحَتَيْنِ يُسَاوِي خَمْسَ تُفَّاحَاتٍ! ثَلَاثَةٌ زَائِدُ اثْنَيْنِ يُسَاوِي خَمْسَةً.",
                                                     SpokenTextFr = "Trois pommes plus deux pommes font cinq pommes ! 3 + 2 = 5.",
                                                     SpokenTextEn = "Three apples plus two apples equals five apples! 3 + 2 = 5.",
-                                                    InteractionPayloadJson = """{"correctOptionId":"sum-5","options":[{"id":"sum-4","emoji":"4️⃣","labelAr":"٤ — أَرْبَعَةٌ","labelFr":"4 — Quatre","labelEn":"4 — Four","accentColor":"#38bdf8"},{"id":"sum-5","emoji":"5️⃣","labelAr":"٥ — خَمْسَةٌ (٣ + ٢ = ٥)","labelFr":"5 — Cinq (3 + 2 = 5)","labelEn":"5 — Five (3 + 2 = 5)","accentColor":"#4cc38a"},{"id":"sum-6","emoji":"6️⃣","labelAr":"٦ — سِتَّةٌ","labelFr":"6 — Six","labelEn":"6 — Six","accentColor":"#f59e0b"}]}""",
+                                                    InteractionPayloadJson = """{"countingItems":{"emoji":"🍎","count":5,"addendA":3,"addendB":2,"itemNameAr":"تُفَّاحَاتٍ فِي السَّلَّةِ","itemNameFr":"Pommes au total","itemNameEn":"Apples in Total"},"correctOptionId":"sum-5","options":[{"id":"sum-4","emoji":"4️⃣","labelAr":"٤ — أَرْبَعَةٌ","labelFr":"4 — Quatre","labelEn":"4 — Four","accentColor":"#38bdf8"},{"id":"sum-5","emoji":"5️⃣","labelAr":"٥ — خَمْسَةٌ (٣ + ٢ = ٥)","labelFr":"5 — Cinq (3 + 2 = 5)","labelEn":"5 — Five (3 + 2 = 5)","accentColor":"#4cc38a"},{"id":"sum-6","emoji":"6️⃣","labelAr":"٦ — سِتَّةٌ","labelFr":"6 — Six","labelEn":"6 — Six","accentColor":"#f59e0b"}]}""",
                                                 },
                                             ],
                                         },
@@ -1644,6 +1990,110 @@ public static class CurriculumCatalog
                                                     SpokenTextFr = "D’abord la graine, puis la pousse verte, et enfin la belle fleur s’épanouit !",
                                                     SpokenTextEn = "First the seed, then the green sprout, and finally the blooming flower!",
                                                     InteractionPayloadJson = """{"correctOptionId":"seq-flower","options":[{"id":"seq-flower","emoji":"🌻","labelAr":"زَهْرَةٌ مُتَفَتِّحَةٌ جَمِيلَةٌ","labelFr":"Une belle fleur épanouie","labelEn":"A Beautiful Blooming Flower","accentColor":"#facc15"},{"id":"seq-rock","emoji":"🪨","labelAr":"صَخْرَةٌ صَلْبَةٌ","labelFr":"Un rocher","labelEn":"A Hard Rock","accentColor":"#94a3b8"},{"id":"seq-snow","emoji":"❄️","labelAr":"ثَلْجٌ أَبْيَضُ","labelFr":"De la neige","labelEn":"White Snow","accentColor":"#38bdf8"}]}""",
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                new LearningDomain
+                {
+                    Id = scienceNatureDomainId,
+                    AgeGroupId = age5Id,
+                    Slug = "age-5-wonders-of-nature-and-sky",
+                    DisplayOrder = 4,
+                    IconEmoji = "☀️",
+                    AccentColor = "#f97316",
+                    TitleAr = "الطَّبِيعَةُ وَعَجَائِبُ السَّمَاءِ وَالمَاءِ",
+                    TitleFr = "Merveilles de la nature, du ciel et de l’eau",
+                    TitleEn = "Wonders of Nature, Day, Night, and Water",
+                    SummaryAr = "نَكْتَشِفُ تَعَاقُبَ النَّهَارِ وَاللَّيْلِ، وَأَهَمِّيَّةَ المَاءِ وَالشَّمْسِ لِلحَيَاةِ.",
+                    SummaryFr = "Découvrir le jour, la nuit et l’importance de l’eau dans la nature.",
+                    SummaryEn = "Explore day and night and the importance of water and sunlight.",
+                    Collections =
+                    [
+                        new CourseCollection
+                        {
+                            Id = scienceCollectionId,
+                            DomainId = scienceNatureDomainId,
+                            Slug = "wonders-of-nature-for-kids",
+                            DisplayOrder = 1,
+                            IsReadingPathway = false,
+                            TitleAr = "سِلْسِلَةُ عَجَائِبِ الطَّبِيعَةِ لِلأَطْفَالِ",
+                            TitleFr = "Collection Merveilles de la nature",
+                            TitleEn = "Wonders of Nature for Kids Collection",
+                            SummaryAr = "النَّهَارُ وَاللَّيْلُ وَنِعْمَةُ المَاءِ فِي حَيَاتِنَا.",
+                            SummaryFr = "Le jour, la nuit et le rôle de l’eau.",
+                            SummaryEn = "Day, night, and the gift of water in our lives.",
+                            Courses =
+                            [
+                                new Course
+                                {
+                                    Id = dayNightCourseId,
+                                    CollectionId = scienceCollectionId,
+                                    Slug = "day-night-and-water-in-nature",
+                                    TargetAge = 5,
+                                    DisplayOrder = 1,
+                                    DifficultyLevel = 2,
+                                    IconEmoji = "🌤️",
+                                    TitleAr = "النَّهَارُ وَاللَّيْلُ وَالمَاءُ فِي حَيَاتِنَا",
+                                    TitleFr = "Le jour, la nuit et l’eau dans notre vie",
+                                    TitleEn = "Day, Night, and Water in Our Lives",
+                                    DescriptionAr = "نَتَعَرَّفُ عَلَى الشَّمْسِ فِي النَّهَارِ وَالقَمَرِ فِي اللَّيْلِ وَكَيْفَ يَسْقِي المَاءُ الكَائِنَاتِ الحَيَّةَ.",
+                                    DescriptionFr = "Découvrons le soleil le jour, la lune la nuit et le rôle de l’eau.",
+                                    DescriptionEn = "Discover the sun by day, the moon by night, and how water nourishes life.",
+                                    CompletionCriteriaAr = "التَّفْرِيقُ بَيْنَ ظَوَاهِرِ النَّهَارِ وَاللَّيْلِ وَفَوَائِدِ المَاءِ.",
+                                    CompletionCriteriaFr = "Distinguer le jour, la nuit et les bienfaits de l’eau.",
+                                    CompletionCriteriaEn = "Distinguish day, night, and the benefits of water.",
+                                    Objectives =
+                                    [
+                                        new LearningObjective
+                                        {
+                                            CourseId = dayNightCourseId,
+                                            Code = "L5-NT-01",
+                                            DisplayOrder = 1,
+                                            DescriptionAr = "فَهْمُ الظَّوَاهِرِ الطَّبِيعِيَّةِ اليَوْمِيَّةِ (النَّهَارُ وَاللَّيْلُ وَأَهَمِّيَّةُ المَاءِ).",
+                                            DescriptionFr = "Comprendre le cycle du jour et de la nuit et le rôle de l’eau.",
+                                            DescriptionEn = "Understand daily natural phenomena (day, night, and water).",
+                                        },
+                                    ],
+                                    Lessons =
+                                    [
+                                        new Lesson
+                                        {
+                                            Id = l9DayNightId,
+                                            CourseId = dayNightCourseId,
+                                            Slug = "sun-by-day-moon-by-night",
+                                            DisplayOrder = 1,
+                                            EstimatedMinutes = 5,
+                                            TitleAr = "الشَّمْسُ فِي النَّهَارِ وَالقَمَرُ فِي اللَّيْلِ",
+                                            TitleFr = "Le soleil le jour et la lune la nuit",
+                                            TitleEn = "The Sun by Day and the Moon by Night",
+                                            SummaryAr = "اِكْتَشِفْ مَتَى تُشْرِقُ الشَّمْسُ وَمَتَى يَظْهَرُ القَمَرُ وَالنُّجُومُ.",
+                                            SummaryFr = "Découvre quand brille le soleil et quand apparaissent la lune et les étoiles.",
+                                            SummaryEn = "Explore when the sun shines and when the moon and stars appear.",
+                                            Activities =
+                                            [
+                                                new Activity
+                                                {
+                                                    LessonId = l9DayNightId,
+                                                    Slug = "age5-nature-day-night",
+                                                    StepOrder = 1,
+                                                    ActivityType = "visual_match_sort",
+                                                    ObjectiveCode = "L5-NT-01",
+                                                    TitleAr = "مَاذَا يُضِيءُ السَّمَاءَ فِي النَّهَارِ وَيَمْنَحُنَا الدِّفْءَ؟",
+                                                    TitleFr = "Qu’est-ce qui éclaire le ciel pendant la journée ?",
+                                                    TitleEn = "What Lights Up the Sky During the Day and Gives Us Warmth?",
+                                                    PromptAr = "اِسْتَكْشِفْ بِطَاقَاتِ الطَّبِيعَةِ، ثُمَّ اخْتَرْ مَا يُضِيءُ السَّمَاءَ فِي النَّهَارِ:",
+                                                    PromptFr = "Explore les cartes de la nature, puis choisis ce qui éclaire le jour :",
+                                                    PromptEn = "Explore the nature cards, then pick what lights up the daytime sky:",
+                                                    SpokenTextAr = "فِي النَّهَارِ تُشْرِقُ الشَّمْسُ الذَّهَبِيَّةُ، وَفِي اللَّيْلِ يَظْهَرُ القَمَرُ المُنِيرُ، وَالمَاءُ يَسْقِي الكَائِنَاتِ!",
+                                                    SpokenTextFr = "Le jour, le soleil brille, et la nuit, la lune éclaire le ciel !",
+                                                    SpokenTextEn = "By day the golden sun shines, and at night the glowing moon appears!",
+                                                    InteractionPayloadJson = """{"learningCards":[{"emoji":"☀️","titleAr":"الشَّمْسُ فِي النَّهَارِ","titleFr":"Le Soleil le jour","titleEn":"The Sun by Day","factAr":"الشَّمْسُ تَمْنَحُنَا النُّورَ وَالدِّفْءَ وَتُسَاعِدُ النَّبَاتَاتِ عَلَى النُّمُوِّ.","factFr":"Le soleil nous donne lumière et chaleur.","factEn":"The sun gives us light and warmth and helps plants grow.","accentColor":"#facc15"},{"emoji":"🌙","titleAr":"القَمَرُ فِي اللَّيْلِ","titleFr":"La Lune la nuit","titleEn":"The Moon at Night","factAr":"يَظْهَرُ القَمَرُ وَالنُّجُومُ فِي السَّمَاءِ عِنْدَمَا يَحِلُّ اللَّيْلُ.","factFr":"La lune et les étoiles apparaissent la nuit.","factEn":"The moon and stars glow in the night sky.","accentColor":"#818cf8"},{"emoji":"💧","titleAr":"المَاءُ سرُّ الحَيَاةِ","titleFr":"L’eau source de vie","titleEn":"Water Gives Life","factAr":"نَشْرَبُ المَاءَ النَّقِيَّ وَنَسْقِي بِهِ الأَشْجَارَ وَالأَزْهَارَ.","factFr":"Nous buvons l’eau et arrosons les plantes.","factEn":"We drink clean water and water trees and flowers.","accentColor":"#38bdf8"}],"correctOptionId":"sky-sun","options":[{"id":"sky-sun","emoji":"☀️","labelAr":"الشَّمْسُ المُشْرِقَةُ فِي النَّهَارِ","labelFr":"Le soleil brillant le jour","labelEn":"The Bright Sun by Day","accentColor":"#facc15"},{"id":"sky-moon","emoji":"🌙","labelAr":"القَمَرُ فِي اللَّيْلِ","labelFr":"La lune la nuit","labelEn":"The Moon at Night","accentColor":"#818cf8"},{"id":"sky-umbrella","emoji":"☂️","labelAr":"المِظَلَّةُ المُلَوَّنَةُ","labelFr":"Le parapluie","labelEn":"The Colorful Umbrella","accentColor":"#f43f5e"}]}""",
                                                 },
                                             ],
                                         },

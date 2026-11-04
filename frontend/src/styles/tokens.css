@@ -1,27 +1,36 @@
 /*
- * NAWWAR design tokens and base typography.
+ * NAWWAR child-friendly storybook design tokens and base typography.
  * RTL rule: use CSS logical properties only (margin-inline-start, padding-inline,
  * border-inline-start, inline-size, block-size, text-align: start).
  */
 :root {
-  --color-bg: #0b1424;
-  --color-surface: #13213a;
-  --color-surface-raised: #1a2c4b;
-  --color-border: #2a4066;
-  --color-text: #f2f5fa;
-  --color-text-muted: #b5c4dc;
-  --color-accent: #f4c76b;
-  --color-success: #4cc38a;
-  --color-danger: #ef6b6b;
-  --color-warning: #f0b34a;
+  --color-bg: #fffaf0;
+  --color-bg-gradient: linear-gradient(180deg, #eef9ff 0%, #fffaf0 48%, #fef3c7 100%);
+  --color-surface: #ffffff;
+  --color-surface-raised: #fff8e7;
+  --color-surface-soft: #f0f9ff;
+  --color-border: #fcd34d;
+  --color-border-strong: #f59e0b;
+  --color-text: #1e293b;
+  --color-text-muted: #475569;
+  --color-accent: #f59e0b;
+  --color-accent-dark: #b45309;
+  --color-primary: #0284c7;
+  --color-success: #16a34a;
+  --color-danger: #e11d48;
+  --color-warning: #d97706;
 
-  --color-world-discovery: #ff8a65;
-  --color-world-exploration: #38bdf8;
-  --color-world-learning: #f4c76b;
+  --color-world-discovery: #ff6b6b;
+  --color-world-exploration: #0ea5e9;
+  --color-world-learning: #f59e0b;
+
+  --shadow-card: 0 10px 26px rgba(30, 41, 59, 0.08), 0 4px 0 rgba(245, 158, 11, 0.22);
+  --shadow-button: 0 4px 0 rgba(180, 83, 9, 0.45);
+  --shadow-option: 0 5px 0 rgba(148, 163, 184, 0.35);
 
   --font-sans: 'Noto Sans Arabic Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -29,7 +38,7 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
 
-  color-scheme: dark;
+  color-scheme: light;
   font-family: var(--font-sans);
   line-height: 1.65;
   color: var(--color-text);
@@ -41,7 +50,7 @@
 
 /* Arabic script needs generous line-height for diacritics (tashkeel) and zero letter-spacing. */
 :lang(ar) {
-  line-height: 1.85;
+  line-height: 1.9;
   letter-spacing: normal;
 }
 
@@ -54,6 +63,8 @@
 body {
   margin: 0;
   min-block-size: 100vh;
+  background: var(--color-bg-gradient);
+  background-attachment: fixed;
 }
 
 h1,
@@ -61,7 +72,8 @@ h2,
 h3,
 h4 {
   margin-block: 0 var(--space-2);
-  line-height: 1.4;
+  line-height: 1.45;
+  color: var(--color-text);
 }
 
 p {
@@ -70,10 +82,15 @@ p {
 
 button {
   font: inherit;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
+}
+
+button:active:not(:disabled) {
+  transform: translateY(2px);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-accent);
+  outline: 3px solid var(--color-primary);
   outline-offset: 2px;
 }
 
